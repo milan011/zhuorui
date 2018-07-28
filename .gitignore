@@ -1,0 +1,10 @@
+/vendor
+/node_modules
+Homestead.yaml
+Homestead.json
+.env
+bower_components
+/public/uploads
+.tags
+.tags_sorted_by_file
+storage\exports
