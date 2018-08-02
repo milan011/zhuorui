@@ -59,7 +59,7 @@
                                     {{$info->name}}
                                 </a>
                             </td>
-                            <td>{{$info->telephone or ''}}</td>                           
+                            <td>{{$info->user_telephone or ''}}</td>                           
                             <td>{{substr($info->created_at, 0 ,10)}}</td>                                
                             <td class="center">
                                 <!-- <a class="btn btn-success" target="_blank" href="{{route('infoSelf.show', ['info'=>$info->id])}}">

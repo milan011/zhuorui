@@ -69,6 +69,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
             $requestData['manage_name']      = $manager->name;
             $requestData['manage_id']        = $manager->id;
             $requestData['manage_telephone'] = $manager->telephone;
+            $requestData['user_telephone']   = $requestData['telephone'];
             $requestData['side_number']      = $side_number;
             $requestData['netin']            = $requestData['netin_year'].$requestData['netin_moth'];
             $requestData['old_bind']         = isset($requestData['old_bind']) ? '1' : '0';
