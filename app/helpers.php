@@ -146,17 +146,13 @@
 	}
 
 	/**
-	 * 获得车源、销售机会、求购,贷款编号
+	 * 获得信息编号
 	 */
-	function getOrderCode($type = 'order')
+	function getInfoCode($type = 'info')
 	{
-		// 车源编号为Unix时间戳后9位
-		if($type == 'order'){
-			$code = 'D-';
-		}elseif($type == 'insurance'){
-			$code = 'O-';
-		}
-		
+		// 信息编号为Unix时间戳后9位
+
+		$code = 'I-';	
 
 		$date = (string)(time());
 		$date =  substr ($date, 1); 

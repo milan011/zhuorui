@@ -6,7 +6,7 @@ interface InfoSelfRepositoryContract
     
     public function find($id);
     
-    public function getAllPlans($requestData);
+    public function getAllInfos($requestData);
 
     public function create($requestData);
 

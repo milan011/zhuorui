@@ -38,67 +38,89 @@
                     {!! csrf_field() !!}
                         <!-- 项目名称 -->
                         <div class="form-group">
-                            <label class="col-md-1 control-label"><font style="color:red;">*</font>项目名称</label>
+                            <label class="col-md-1 control-label"><font style="color:red;">*</font>项目名称:</label>
                             <div class="col-md-4">
                                 <input type="text" name="project_name" required placeholder="项目名称" class="form-control" value="{{old('project_name')}}"/>
                             </div>
                         </div>
+                        <!-- 客户经理 -->
+                        <div class="form-group">
+                            <label class="control-label col-md-1">客户经理:</label>
+                            <div class="col-md-8">
+                                <select class="form-control" id="manager" name="manager" style="width:15%;display: inline-block;">
+                                    @foreach($managers as $key=>$manager)
+                                        <option value="{{$manager->id}}" >{{$manager->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <!-- 客户名 -->
                         <div class="form-group">
-                            <label class="col-md-1 control-label"><font style="color:red;">*</font>客户姓名</label>
+                            <label class="col-md-1 control-label"><font style="color:red;">*</font>客户姓名:</label>
                             <div class="col-md-4">
                                 <input type="text" name="name" required placeholder="客户姓名" class="form-control" value="{{old('name')}}"/>
                             </div>
                         </div>
                         <!-- 联系电话 -->
                         <div class="form-group">
-                            <label class="col-md-1 control-label">联系电话</label>
+                            <label class="col-md-1 control-label">联系电话:</label>
                             <div class="col-md-4">
                                 <input type="text"  name="telephone" placeholder="联系电话" class="form-control" value="{{old('telephone')}}" />
                             </div>
                         </div>
                         <!-- 新号码 -->
                         <div class="form-group">
-                            <label class="col-md-1 control-label">新号码</label>
+                            <label class="col-md-1 control-label">新号码:</label>
                             <div class="col-md-4">
                                 <input type="text"  name="new_telephone" placeholder="新号码" class="form-control" value="{{old('new_telephone')}}" />
                             </div>
                         </div>
                         <!-- UIM码 -->
                         <div class="form-group">
-                            <label class="col-md-1 control-label">UIM码</label>
+                            <label class="col-md-1 control-label">UIM码:</label>
                             <div class="col-md-4">
                                 <input type="text"  name="uim_number" placeholder="UIM码" class="form-control" value="{{old('uim_number')}}" />
                             </div>
                         </div>
                         <!-- 副卡 -->
                         <div class="form-group">
-                            <label class="col-md-1 control-label">副卡</label>
-                            <div class="col-md-4">
-                                <input type="text"  name="side_number" placeholder="副卡" class="form-control" value="{{old('side_number')}}" />
+                            <label class="col-md-1 control-label">副卡:</label>
+                            <div id="fuka_info" class="col-md-4">
+                                <input type="text" class="form-control fuka_list" style="display: inline-block;width:75%;margin-bottom:5px;"  name="side_numbers[]" placeholder="副卡" class="form-control" value="{{old('side_numbers')}}" />
+                                <button style="display: inline-block;width:20%;" id="fuka_add" type="button" class="btn btn-success">添加副卡</button>
+                            </div>
+                            
+                        </div>
+                        <!-- 是否绑老卡 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">绑老卡:</label>
+                            <div class="col-md-9">
+                                <label class="switch switch-primary">
+                                    <input  name="old_bind" style="" type="checkbox"><span class="switch"></span>
+                                </label>
                             </div>
                         </div>
                         <!-- 入网时间 -->
                         <div class="form-group">
                                 <label class="control-label col-md-1">入网时间: </label>
                                 <div class="col-md-1">
-                                    <select class="form-control" name="month_nums" style="display: inline-block;">
+                                    <select class="form-control" name="netin_year" style="display: inline-block;">
                                         @foreach($package_year as $key=>$year)
-                                        <option value="{{$key}}" >{{$year}}</option>
+                                        <option @if(($dt_year) == ($year)) selected='selected' @endif value="{{$year}}" >{{$year}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-1">
-                                    <select class="form-control" name="month_nums" style="display: inline-block;">
+                                    <select class="form-control" name="netin_moth" style="display: inline-block;">
                                         @foreach($package_month as $key=>$mo)
-                                        <option value="{{$key}}" >{{$mo}}</option>
+                                        <option @if(($dt_month) == ($mo)) selected='selected' @endif value="{{$mo}}" >{{$mo}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                         </div>
                         <!-- 收款 -->
                         <div class="form-group">
-                            <label class="col-md-1 control-label"></font>收款(元)</label>
+                            <label class="col-md-1 control-label"></font>收款(元):</label>
                             <div class="col-md-4">
                                 <input type="collections" style="width:25%;"  name="collections" placeholder="收款" class="form-control" value="{{old('collections')}}" />
                             </div>
@@ -164,9 +186,63 @@
                             message: '请输入客户经理名'
                         }
                     }
-                },              
+                }, 
+                collections: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入收款金额'
+                        }
+                    }
+                },
+                telephone: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入手机号码'
+                        },
+                        regexp: {
+                            regexp: /^1[3|5|8|9]{1}[0-9]{9}$/,
+                            message: '请输入正确的手机号!'
+                        },
+                    }
+                },  
+                new_telephone: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入手机号码'
+                        },
+                        regexp: {
+                            regexp: /^1[3|5|8|9]{1}[0-9]{9}$/,
+                            message: '请输入正确的手机号!'
+                        },
+                    }
+                },          
             }
         }); 
+
+        // 删除副卡
+        $("#fuka_info").on("click",".fuka_del", function() {
+
+            // 删除对应副卡信息及按钮本身
+            $(this).prev().remove();
+            $(this).remove();
+            // console.log($(this).prev());
+        });
+
+        //增加副卡
+        $('#fuka_add').click(function(){
+
+            var form_fuka = $('.fuka_list').first().clone(true);
+            var form_del_button = '';
+           
+
+            form_del_button += '<button style="display: inline-block;width:20%;margin-left:2px;" type="button" class="btn btn-danger fuka_del">删除</button>';
+            
+            // console.log(form_fuka);return false;
+            $(form_fuka).val('');
+            $('#fuka_add').after(form_del_button);
+            $('#fuka_add').after(form_fuka);
+            
+        });
     });
 </script>
 @endsection

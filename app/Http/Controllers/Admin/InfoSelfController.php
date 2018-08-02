@@ -7,14 +7,14 @@ use Auth;
 use Gate;
 use DB;
 use Session;
-use App\Area;
-use App\Image;
+use Carbon;
+
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\InfoSelf\InfoSelfRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
-/*use App\Repositories\Goods\GoodsRepositoryContract;
-use App\Repositories\Category\CategoryRepositoryContract;*/
+use App\Repositories\Manager\ManagerRepositoryContract;
+/*use App\Repositories\Category\CategoryRepositoryContract;*/
 use App\Http\Requests\InfoSelf\UpdateOrderRequest;
 use App\Http\Requests\InfoSelf\StoreOrderRequest;
 
@@ -25,11 +25,13 @@ class InfoSelfController extends Controller
     public function __construct(
 
         InfoSelfRepositoryContract $infoSelf,
+        ManagerRepositoryContract $manager,
         UserRepositoryContract $user
     ) {
     
         $this->infoSelf    = $infoSelf;
-        $this->user     = $user;
+        $this->manager     = $manager;
+        $this->user        = $user;
         // $this->middleware('brand.create', ['only' => ['create']]);
     }
 
@@ -45,7 +47,7 @@ class InfoSelfController extends Controller
         //$request['order_status'] = '1';
         $select_conditions  = $request->all();
         // dd($select_conditions);
-        $orders = $this->order->getAllOrders($request);
+        $infoSelfs = $this->infoSelf->getAllInfos($request);
         // dd(lastSql());
         // dd($orders);
         //$shops = $this->shop->getShopsInProvence('10');
@@ -61,7 +63,7 @@ class InfoSelfController extends Controller
         //$order_status_current = '1';
         
         /*return view('admin.order.index', compact('orders','order_status_current', 'all_top_brands', 'select_conditions','shops'));*/
-        return view('admin.order.index', compact('orders', 'select_conditions'));
+        return view('admin.infoSelf.index', compact('infoSelfs', 'select_conditions'));
     }
 
     /**
@@ -71,7 +73,14 @@ class InfoSelfController extends Controller
      */
     public function create()
     {
-        return view('admin.infoSelf.create');
+        $dt = Carbon::now(); //当前日期
+
+        $dt_year  = $dt->year;  //当前年
+        $dt_month = $dt->month; //当前月
+
+        $managers = $this->manager->getManagers();
+
+        return view('admin.infoSelf.create', compact('dt_year', 'dt_month', 'managers'));
     }
 
     /**
@@ -80,45 +89,17 @@ class InfoSelfController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreOrderRequest $request)
+    public function store(Request $request)
     {
 
+
         // dd($request->all());
-        $order_goods = [];
-        foreach ($request->category_id as $key => $value) {
-            $category_name = $this->category->find($value)->name;
-            $order_goods[$key]['category_id']   = $value;
-            $order_goods[$key]['category_name'] = $category_name;
-            $order_goods[$key]['goods_id']      = $request->goods_id[$key];
-            $order_goods[$key]['goods_num']     = $request->goods_num[$key];
-            $order_goods[$key]['goods_price']   = $request->goods_price[$key];
-            $order_goods[$key]['goods_name']    = $request->goods_name[$key];
-            $order_goods[$key]['price_level']   = $request->level;
-            $order_goods[$key]['total_price']   = ($request->goods_num[$key] * $request->goods_price[$key]);
-        }
 
-        $goods_num   = 0;
-        $total_price = 0;
-        
-        foreach ($order_goods as $key => $value) {
-            $goods_num   = $goods_num + $value['goods_num'];
-            $total_price = $total_price + ($value['goods_price'] * $value['goods_num']);
-        }
+        $info = $this->infoSelf->create($request);
 
-        $request['type_num']    = count($order_goods);
-        $request['goods_num']   = $goods_num;
-        $request['total_price'] = $total_price;
-        $request['order_goods'] = $order_goods;
+        Session::flash('sucess', '添加信息成功');
 
-        /*p($goods_num);
-        p($total_price);
-        p($order_goods);
-        dd($request->all());*/
-        $orders = $this->order->create($request);
-
-        Session::flash('sucess', '添加订单成功');
-
-         return redirect('order/index')->withInput();
+         return redirect('infoSelf/index')->withInput();
     }
 
     /**

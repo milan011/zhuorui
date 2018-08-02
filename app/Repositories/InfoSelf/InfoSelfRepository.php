@@ -2,9 +2,8 @@
 namespace App\Repositories\InfoSelf;
 
 use App\InfoSelf;
-use App\Cars;
-use App\Want;
-use App\Chance;
+use App\Manager;
+
 use Session;
 use Illuminate\Http\Request;
 use Gate;
@@ -19,19 +18,8 @@ use Debugbar;
 class InfoSelfRepository implements InfoSelfRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['id', 'chance_id', 'user_id', 'plan_time', 'plan_remark', 'plan_address', 'plan_del', 'status', 'created_at', 'definite_time'];
+    protected $select_columns = ['code', 'name', 'user_telephone', 'old_bind', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'status','remark'];
 
-    // 约车表列名称-注释对应
-    protected $columns_annotate = [
-
-        'car_id'            => '车源id',
-        'want_id'           => '求购id',
-        'car_customer_id'   => '车源用户id',
-        'want_customer_id'  => '求购用户id',
-        'car_creater'       => '车源创建者id',
-        'want_creater'      => '求购信息创建者id',
-        'creater'           => '约车创建者id',
-    ];
 
     // 根据ID获得约车信息
     public function find($id)
@@ -41,71 +29,61 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
     }
 
     // 根据不同参数获得约车列表
-    public function getAllPlans($request)
+    public function getAllInfos($request)
     {   
         // dd($request->Plan_launch);
         // $query = Plan::query();  // 返回的是一个 QueryBuilder 实例
-        $query = new Plan();       // 返回的是一个Plan实例,两种方法均可
+        $query = new InfoSelf();       // 返回的是一个Plan实例,两种方法均可
         // dd($request->all());
         $query = $query->addCondition($request->all()); //根据条件组合语句
 
         // $query = $query->chacneLaunch($request->Plan_launch);
 
         return $query->select($this->select_columns)
-                     ->orderBy('plan_time', 'DESC')
+                     ->orderBy('created_at', 'DESC')
                      ->paginate(10);
     }
 
-    // 创建约车
+    // 创建信息
     public function create($requestData)
-    {   
-        DB::transaction(function() use ($requestData){
-            // 添加约车并返回实例,同时约车对应车源、求购信息设置为约车状态           
-            $requestData['user_id']     = Auth::id();
+    {             
+            $requestData['creater_id']     = Auth::id();
     
-            $plan   = new Plan();
-            $car    = Cars::findOrFail($requestData->car_id);
-            $want   = Want::findOrFail($requestData->want_id);
-            $chance = Chance::findOrFail($requestData->chance_id);
+            $info   = new infoSelf();
 
-            //获得交易参与者ID及门店ID
-            $partner = getPartnerInfo($chance->car_creater,$chance->want_creater,$chance->creater);
-            // dd($partner);
-            if($partner['self']){
-                //车源、求购均来自本用户
-                $requestData['partner_id'] = Auth::id();
-                $requestData['partner_shop'] = $chance->shop_id;
-            }else{
-                if($partner['want']){
-                    // 对方提供求购信息
-                    $requestData['partner_id']   = $partner['user_id'];
-                    $requestData['partner_shop'] = $want->shop_id;
-                }else{
-                    // 对方提供车源信息
-                    $requestData['partner_id'] = $partner['user_id'];
-                    $requestData['partner_shop'] = $car->shop_id;
-                }
-            }
-
-            $requestData['shop_id'] = $chance->shop_id;
-            $requestData['definite_time'] = $requestData->hafe_day.$requestData->hours;
-            // dd($requestData->definite_time);
-            $input  =  array_replace($requestData->all());
-
-            //车源、求购、约车状态设置为已约车状态
-            $car->car_status       = '3';
-            $want->want_status     = '3';
-            $chance->status        = '4';
+            //获得客户经理信息
+            $manager = Manager::findOrFail($requestData['manager']);
             
-            $plan->fill($input);
+            // dd($manager);
+            // 处理副卡信息
+            // dd($requestData->all());
+            if (!empty($requestData['side_numbers'])){
 
-            $plan = $plan->create($input);
-            $car->save();
-            $want->save();
-            $chance->save();
+                $side_number = implode("|",  array_unique($requestData['side_numbers']));
+            }
+            
 
-            return $plan;
-        });      
+            // dd($side_number);
+
+            $requestData['code']             = getInfoCode();
+            $requestData['manage_name']      = $manager->name;
+            $requestData['manage_id']        = $manager->id;
+            $requestData['manage_telephone'] = $manager->telephone;
+            $requestData['side_number']      = $side_number;
+            $requestData['netin']            = $requestData['netin_year'].$requestData['netin_moth'];
+            $requestData['old_bind']         = isset($requestData['old_bind']) ? '1' : '0';
+
+
+
+            // dd($requestData->all());
+
+            $input  =  array_replace($requestData->all());
+            
+            $info->fill($input);
+
+            $info = $info->create($input);
+
+            return $info;     
     }
 
     // 发起约车

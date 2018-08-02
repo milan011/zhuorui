@@ -26,7 +26,7 @@ class ManagerRepository implements ManagerRepositoryContract
                    ->findOrFail($id);
     }
 
-    // 根据不同参数获得商品列表
+    // 根据不同参数获得客户经理
     public function getAllManagers($request)
     {   
         // dd($request->all());
@@ -45,6 +45,19 @@ class ManagerRepository implements ManagerRepositoryContract
                      ->paginate(10);
     }
 
+    // 获取所有客户经理
+    public function getManagers()
+    {   
+        // dd($request->all());
+        // $query = Order::query();  // 返回的是一个 QueryBuilder 实例
+        $query = new Manager();       // 返回的是一个Order实例,两种方法均可
+
+        $query = $query->where('status', '1');
+
+        return $query->select($this->select_columns)
+                     ->orderBy('created_at', 'desc')
+                     ->get();
+    }
 
     // 添加客户经理
     public function create($requestData)

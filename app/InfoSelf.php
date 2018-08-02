@@ -24,7 +24,7 @@ class InfoSelf extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['code', 'name', 'user_telephone', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'status','remark'];
+    protected $fillable = ['code', 'name', 'user_telephone', 'old_bind', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'status','remark'];
 
     /**
      * The attributes excluded from the model's JSON form.
