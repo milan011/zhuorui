@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>订单系统</title>
+    <title>卓睿电信系统</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +38,7 @@
             @endif
             <div class="inner">
                 <!--BEGIN LOGO-->
-                <div class="header"><a href="javascript:void(0);" class="logo">订单系统</a></div>
+                <div class="header"><a href="javascript:void(0);" class="logo">卓睿电信系统</a></div>
                 <!--END LOGO-->
                 <!--BEGIN CONTENT-->
                 <form action="{{url('/login')}}" method="post" class="login-form">

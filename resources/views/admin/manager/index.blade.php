@@ -104,20 +104,21 @@
                     <form class="form-horizontal" id="condition" action="{{route('manager.index')}}/index" method="post">
                     {!! csrf_field() !!}
                         <fieldset>
-                        <div class="control-group">
-                            <label class="control-label" for="name">姓名</label>
-                                <input class="input-xlarge focused" name="name" id="name" type="text" value="">
-                                <input type="text" class="col-md-12 form-control mbm" />
-                        </div>                      
-                        <div class="control-group">
-                            <label class="control-label" for="telephone">电话</label>
-                                <input class="input-xlarge focused" name="telephone" id="telephone" type="text" value="">
-                                <input type="text" class="col-md-12 form-control mbm" />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="text" value="{{$select_conditions['user_telephone'] or ''}}"  name="user_telephone" placeholder="客户电话" class="col-md-12 form-control mbm" />
+                                <input type="text" name="date" value="{{$select_conditions['date'] or ''}}" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
+                                <label class="control-label" for="category_type">信息状态:</label>
+                                <select name="status" class="col-md-4 form-control mbm">
+                                    <option value=''>不限</option>                                        
+                                </select>
+                            </div>
                         </div> 
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">搜索</button>
                             <a href="javascript:void(0);" class="btn" data-dismiss="modal">关闭</a>                            
-                        </div>                       
+                        </div> 
+                        </fieldset>                      
                     </form>
                 </div>
             </div>

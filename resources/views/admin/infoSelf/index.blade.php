@@ -42,29 +42,41 @@
 							<a href="#" onclick="window.history.go(-1);return false;" class="btn ">返回</a>
 						</li>
             		</ul>
-                    <table id="datatables" class="table table-striped table-no-border">
+                    <table id="datatables" class="table table-striped table-border">
                         <thead class="bg-default">
                             <tr>
-                                <th>信息</th>
+                                <th>编号</th>
+                                <th>项目</th>
+                                <th>新卡</th>
+                                <th>套餐</th>
+                                <th>客户</th>
                                 <th>电话</th>
-                                <th>创建日期</th>
+                                <th>入网</th>
+                                <th>返还状态</th>
+                                <th>创建</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
                         @foreach ($infoSelfs as $info)
                         <tr>
-                            <td>
-                                <a target="_blank" href="{{route('infoSelf.show', ['info'=>$info->id])}}">
-                                    {{$info->name}}
-                                </a>
-                            </td>
+                        	<td>
+                        		<a target="_blank" href="{{route('infoSelf.show', ['info'=>$info->id])}}">
+                        			{{$info->code or ''}}
+                        		</a>
+                        	</td> 
+                        	<td>{{$info->project_name or ''}}</td> 
+                        	<td>{{$info->new_telephone or ''}}</td> 
+                        	<td>{{$info->hasOnePackage->name or ''}}</td> 
+                            <td>{{$info->name}}</td>
                             <td>{{$info->user_telephone or ''}}</td>                           
-                            <td>{{substr($info->created_at, 0 ,10)}}</td>                                
+                            <td>{{$info->netin or ''}}</td>                           
+                            <td>{{$info_status[$info->status]}}</td>                           
+                            <td>{{$info->belongsToCreater->nick_name}}|{{substr($info->created_at, 0 ,10)}}</td>                                
                             <td class="center">
-                                <!-- <a class="btn btn-success" target="_blank" href="{{route('infoSelf.show', ['info'=>$info->id])}}">
+                                <a class="btn btn-success" target="_blank" href="{{route('infoSelf.show', ['info'=>$info->id])}}">
                                     <i class="icon-edit icon-white"></i> 查看
-                                </a> -->
+                                </a>
                                 <a class="btn btn-warning"  href="{{route('infoSelf.edit', ['info'=>$info->id])}}">
                                     <i class="icon-edit icon-white"></i> 编辑
                                 </a>
@@ -104,20 +116,21 @@
                     <form class="form-horizontal" id="condition" action="{{route('infoSelf.index')}}/index" method="post">
                     {!! csrf_field() !!}
                         <fieldset>
-                        <div class="control-group">
-                            <label class="control-label" for="name">姓名</label>
-                                <input class="input-xlarge focused" name="name" id="name" type="text" value="">
-                                <input type="text" class="col-md-12 form-control mbm" />
-                        </div>                      
-                        <div class="control-group">
-                            <label class="control-label" for="telephone">电话</label>
-                                <input class="input-xlarge focused" name="telephone" id="telephone" type="text" value="">
-                                <input type="text" class="col-md-12 form-control mbm" />
-                        </div> 
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="text" value="{{$select_conditions['user_telephone'] or ''}}"  name="user_telephone" placeholder="客户电话" class="col-md-12 form-control mbm" />
+                                <input type="text" name="date" value="{{$select_conditions['date'] or ''}}" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
+                                <label class="control-label" for="category_type">信息状态:</label>
+                                <select name="status" class="col-md-4 form-control mbm">
+                                    <option value=''>不限</option>                                        
+                                </select>
+                            </div>
+                        </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">搜索</button>
                             <a href="javascript:void(0);" class="btn" data-dismiss="modal">关闭</a>                            
-                        </div>                       
+                        </div> 
+                        </fieldset>                      
                     </form>
                 </div>
             </div>

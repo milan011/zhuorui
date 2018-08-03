@@ -14,7 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Repositories\InfoSelf\InfoSelfRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
 use App\Repositories\Manager\ManagerRepositoryContract;
-/*use App\Repositories\Category\CategoryRepositoryContract;*/
+use App\Repositories\Package\PackageRepositoryContract;
 use App\Http\Requests\InfoSelf\UpdateOrderRequest;
 use App\Http\Requests\InfoSelf\StoreOrderRequest;
 
@@ -26,11 +26,13 @@ class InfoSelfController extends Controller
 
         InfoSelfRepositoryContract $infoSelf,
         ManagerRepositoryContract $manager,
+        PackageRepositoryContract $package,
         UserRepositoryContract $user
     ) {
     
         $this->infoSelf    = $infoSelf;
         $this->manager     = $manager;
+        $this->package     = $package;
         $this->user        = $user;
         // $this->middleware('brand.create', ['only' => ['create']]);
     }
@@ -42,27 +44,13 @@ class InfoSelfController extends Controller
      */
     public function index(Request $request)
     {
-        // dd($request->method());
-        //$all_top_brands = $this->brands->getChildBrand(0);
-        //$request['order_status'] = '1';
+        
         $select_conditions  = $request->all();
         // dd($select_conditions);
         $infoSelfs = $this->infoSelf->getAllInfos($request);
-        // dd(lastSql());
-        // dd($orders);
-        //$shops = $this->shop->getShopsInProvence('10');
 
-        // dd($shops);
-        // dd(lastSql());
-        // dd($orders);
-        /*foreach ($orders as $key => $value) {
-            p($value->id);
-            p($value->belongsToUser->nick_name);
-        }
-        exit;*/
-        //$order_status_current = '1';
+        // dd($infoSelfs[0]->belongsToCreater);
         
-        /*return view('admin.order.index', compact('orders','order_status_current', 'all_top_brands', 'select_conditions','shops'));*/
         return view('admin.infoSelf.index', compact('infoSelfs', 'select_conditions'));
     }
 
@@ -78,9 +66,10 @@ class InfoSelfController extends Controller
         $dt_year  = $dt->year;  //当前年
         $dt_month = $dt->month; //当前月
 
-        $managers = $this->manager->getManagers();
+        $managers = $this->manager->getManagers(); // 电信客户经理
+        $packages = $this->package->getPackages(); // 电信客户经理
 
-        return view('admin.infoSelf.create', compact('dt_year', 'dt_month', 'managers'));
+        return view('admin.infoSelf.create', compact('dt_year', 'dt_month', 'managers', 'packages'));
     }
 
     /**
@@ -110,13 +99,15 @@ class InfoSelfController extends Controller
      */
     public function show($id)
     {
-        $orders      = $this->order->find($id);
-        $order_goods = $orders->hasManyOrderGoods;
+        $info         = array();
+        $package_info = array();
 
-        // dd($orders);
-        // dd($orders->hasManyOrderGoods[0]->belongsToCategory->name);
+        $info         = $this->infoSelf->find($id);
+        $package_info = $info->hasOnePackage;
 
-        return view('admin.order.show', compact('orders', 'order_goods'));
+         // dd($package_info);
+
+        return view('admin.infoSelf.show', compact('info', 'package_info'));
     }
 
     /**
@@ -127,21 +118,16 @@ class InfoSelfController extends Controller
      */
     public function edit($id)
     {
-        $order = $this->order->find($id);
-        $order_goods = $order->hasManyOrderGoods;
-        // dd($order);
-        $hsd = $order_goods[0]->hasManyGoods;
-        // dd(lastSql());
-        // dd($order_goods[0]->hasManyGoods);
+        $info         = $this->infoSelf->find($id);
+        
+        dd($info);
 
-        //所有系列
-        $all_series = $this->category->getAllSeries();
-        // dd($all_series);
-        //商户列表
-        $all_merchant  = $this->user->getAllMerchant();
-        // dd([$all_series,$all_merchant]);
-        return view('admin.order.edit', compact(
-            'order', 'order_goods', 'all_series','all_merchant'
+        $managers = $this->manager->getManagers(); // 电信客户经理
+        $packages = $this->package->getPackages(); // 套餐信息
+
+
+        return view('admin.infoSelf.edit', compact(
+            'info', 'managers', 'packages'
         ));
     }
 

@@ -33,12 +33,11 @@ class PackageRepository implements PackageRepositoryContract
         return Package::where('status', '1')->orderBy('created_at', 'DESC')->paginate(10);
     }
 
-    // 获得商品系列列表
-    public function getAllSeries()
+    // 获得所有套餐
+    public function getPackages()
     {   
         return Package::select($this->select_columns)
                        ->where('status', '1')
-                       ->where('pid', '0')
                        ->get();
     }
 

@@ -24,7 +24,7 @@ class InfoSelf extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['code', 'name', 'user_telephone', 'old_bind', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'status','remark'];
+    protected $fillable = ['code', 'name', 'user_telephone', 'old_bind', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'status','remark', 'package_id'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -124,10 +124,10 @@ class InfoSelf extends Model
       return $this->belongsTo('App\User', 'creater_id', 'id')->select('id as user_id', 'nick_name', 'telephone as creater_telephone');
     }
 
-    // 定义User表与order表一对多关系
-    public function belongsToUser(){
-
-      return $this->belongsTo('App\User', 'user_id', 'id')->select('id as user_id', 'nick_name', 'telephone as user_telephone');
+    // 定义信息表与套餐表一对一关系
+    public function hasOnePackage()
+    {
+        return $this->hasOne('App\Package', 'id', 'package_id');
     }
 
     // 定义User表与order表一对多关系

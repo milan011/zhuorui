@@ -54,10 +54,10 @@ class Package extends Model
             ') values (?'.str_repeat(',?',count($array) - 1).')',array_values($array));
     }
 
-    // 定义Brand表与Category表一对多关系
-    public function belongsToBrand(){
+    // 定义套餐表与信息表一对多关系
+    public function belongsToInfoSelf(){
 
-      return $this->belongsTo('App\Brand', 'brand_id', 'id')->select('id','pid', 'name AS brand_name');
+      return $this->belongsTo('App\InfoSelf', 'id', 'package_id');
     }
 
     // 定义Package表与PackageInfo表一对多关系

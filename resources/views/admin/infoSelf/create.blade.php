@@ -54,6 +54,17 @@
                                 </select>
                             </div>
                         </div>
+                        <!-- 套餐 -->
+                        <div class="form-group">
+                            <label class="control-label col-md-1">套餐:</label>
+                            <div class="col-md-8">
+                                <select class="form-control" id="package" name="package_id" style="width:15%;display: inline-block;">
+                                    @foreach($packages as $key=>$package)
+                                        <option value="{{$package->id}}" >{{$package->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <!-- 客户名 -->
                         <div class="form-group">
                             <label class="col-md-1 control-label"><font style="color:red;">*</font>客户姓名:</label>
@@ -200,7 +211,7 @@
                             message: '请输入手机号码'
                         },
                         regexp: {
-                            regexp: /^1[3|5|8|9]{1}[0-9]{9}$/,
+                            regexp: /^1[3|5|7|8|9]{1}[0-9]{9}$/,
                             message: '请输入正确的手机号!'
                         },
                     }
@@ -211,7 +222,7 @@
                             message: '请输入手机号码'
                         },
                         regexp: {
-                            regexp: /^1[3|5|8|9]{1}[0-9]{9}$/,
+                            regexp: /^1[3|5|7|8|9]{1}[0-9]{9}$/,
                             message: '请输入正确的手机号!'
                         },
                     }

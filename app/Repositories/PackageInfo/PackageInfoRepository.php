@@ -17,7 +17,7 @@ class PackageInfoRepository implements PackageInfoRepositoryContract
 {
 
     //默认查询数据
-    protected $select_columns = ['id', 'bloc', 'name', 'package_price', 'netin', 'status', 'recommend', 'remark', 'creater_id', 'created_at', 'updated_at'];
+    protected $select_columns = ['id', 'bloc', 'name', 'package_price',  'netin', 'status', 'recommend', 'remark', 'creater_id', 'created_at', 'updated_at'];
 
     // 根据ID获得车型信息
     public function find($id)
@@ -26,20 +26,13 @@ class PackageInfoRepository implements PackageInfoRepositoryContract
                        ->findOrFail($id);
     }
 
-    // 获得车型列表
+    // 获得套餐列表(分页)
     public function getAllPackage()
     {   
         return Package::where('status', '1')->orderBy('created_at', 'DESC')->paginate(10);
     }
 
-    // 获得商品系列列表
-    public function getAllSeries()
-    {   
-        return Package::select($this->select_columns)
-                       ->where('status', '1')
-                       ->where('pid', '0')
-                       ->get();
-    }
+    
 
     // 创建车型
     public function create($requestData)

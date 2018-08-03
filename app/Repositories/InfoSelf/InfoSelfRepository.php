@@ -18,13 +18,13 @@ use Debugbar;
 class InfoSelfRepository implements InfoSelfRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['code', 'name', 'user_telephone', 'old_bind', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'status','remark'];
+    protected $select_columns = ['code', 'id', 'name', 'user_telephone', 'old_bind', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'package_id', 'status','remark','created_at'];
 
 
     // 根据ID获得约车信息
     public function find($id)
     {
-        return Plan::select($this->select_columns)
+        return InfoSelf::select($this->select_columns)
                    ->findOrFail($id);
     }
 
@@ -71,10 +71,8 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
             $requestData['manage_telephone'] = $manager->telephone;
             $requestData['user_telephone']   = $requestData['telephone'];
             $requestData['side_number']      = $side_number;
-            $requestData['netin']            = $requestData['netin_year'].$requestData['netin_moth'];
+            $requestData['netin']            = $requestData['netin_year'].'-'.$requestData['netin_moth'];
             $requestData['old_bind']         = isset($requestData['old_bind']) ? '1' : '0';
-
-
 
             // dd($requestData->all());
 

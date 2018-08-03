@@ -243,6 +243,7 @@ th {
   .table td,
   .table th {
     background-color: #fff !important;
+    text-align: center;
   }
   .btn > .caret,
   .dropup > .btn > .caret {
@@ -2221,6 +2222,7 @@ th {
   line-height: 1.53846154;
   vertical-align: middle;
   border-top: 1px solid #efefef;
+  text-align: center;
 }
 .table > thead > tr > th {
   vertical-align: bottom;
