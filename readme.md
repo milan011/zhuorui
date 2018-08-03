@@ -1,4 +1,4 @@
-git clone git@github.com:milan011/tcl.git
+git clone git@github.com:milan011/zhuorui.git
 <br>
 composer install
 <br>
