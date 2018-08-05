@@ -47,9 +47,19 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
     // 创建信息
     public function create($requestData)
     {             
+            
+            $repeated = $this->isRepeat($requestData->new_telephone);
+
+            // dd($repeated);
+
+            if(null !== $repeated){
+                Session::flash('sucess', '该号码已经存在');
+                return $repeated;
+            }
+
             $requestData['creater_id']     = Auth::id();
     
-            $info   = new infoSelf();
+            $info   = new InfoSelf();
 
             //获得客户经理信息
             $manager = Manager::findOrFail($requestData['manager']);
@@ -81,6 +91,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
             $info->fill($input);
 
             $info = $info->create($input);
+            Session::flash('sucess', '添加信息成功');
 
             return $info;     
     }
@@ -106,58 +117,48 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
     // 看车结果反馈
     public function update($requestData, $id)
     {   
-        /**
-        * 处理逻辑：
-        * 1、看车后有购买意向，则转为订车操作，对应车源、求购、销售机会状态设置为订车   
-        * 2、看车失败或没有看车，则该约车信息被废弃、对应销售机会也被废弃，对应车源信息和客源信息转为正常状态，
-        *   可以再次被匹配并发起约车。    
-        */
+
+        $repeated = $this->isRepeat($requestData->new_telephone);
+
+        $info   = InfoSelf::select($this->select_columns)->findorFail($id); //获取信息
+        $manager = Manager::findOrFail($requestData['manager']);//获得客户经理信息
+
+        // 处理副卡信息
         // dd($requestData->all());
-        /*$plan   = Plan::select($this->select_columns)->findorFail($id); //约车对象
+        if (!empty($requestData['side_numbers'])){
+            $side_number = implode("|",  array_unique($requestData['side_numbers']));
+        }
 
-        $plan->status = '0';
-        $plan->plan_remark = $requestData->plan_remark;
+        // dd($side_number);
+        
+        $info->name             = $requestData->name;
+        $info->user_telephone   = $requestData->telephone;
+        $info->manage_name      = $manager->name;
+        $info->manage_telephone = $manager->telephone;
+        $info->manage_id        = $requestData->manager;
+        $info->project_name     = $requestData->project_name;
+        // $info->new_telephone    = $requestData->new_telephone;
+        $info->uim_number       = $requestData->uim_number;
+        $info->collections      = $requestData->collections;
+        $info->side_number      = $side_number;
+        $info->collections_type = $requestData->collections_type;
+        $info->netin            = $requestData->netin_year.'-'.$requestData->netin_moth;
+        $info->old_bind         = isset($requestData->old_bind) ? '1' : '0';
 
-        Session::flash('sucess', '革命尚未成功，同志仍需努力');
-        $plan->save();
 
-        return $plan;*/
+        Session::flash('sucess', '信息修改成功');
+        $info->save();
 
-        DB::transaction(function() use ($requestData, $id){
-
-            $plan   = Plan::select($this->select_columns)->findorFail($id); //约车对象
-            $chance = Chance::findOrFail($plan->chance_id);
-            $car    = Cars::findOrFail($chance->car_id);
-            $want   = Want::findOrFail($chance->want_id);
-
-            //dd($plan);
-            // dd($chance);
-            // dd($car);
-            // dd($want);
-
-            // 看车失败
-            $car->car_status   = '1';
-            $want->want_status = '1';
-            $chance->status    = '0';
-            $plan->status = '0';
-            $plan->plan_remark = $requestData->plan_remark;
-            Session::flash('sucess', '革命尚未成功，同志仍需努力');
-
-            $car->save();
-            $want->save();
-            $chance->save();
-            $plan->save();
-
-            return $plan;           
-        });           
+        return $info;                     
     }
 
-    // 删除约车
+    // 删除信息
     public function destroy($id)
     {
         try {
-            $Plan = Plan::findorFail($id);
-            $Plan->delete();
+            $info = InfoSelf::findorFail($id);
+            $info->status = '0';
+            $info->save();
             Session::flash('sucess', '删除约车成功');
            
         } catch (\Illuminate\Database\QueryException $e) {
@@ -165,17 +166,13 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
         }      
     }
 
-    //判断约车是否重复
-    public function isRepeat($requestData){
+    //判断电话号码是否重复
+    public function isRepeat($new_telephone){
 
-        $car_id  = $requestData->car_id;
-        $want_id = $requestData->want_id;
+        $info = InfoSelf::where('new_telephone', $new_telephone)->first();
 
-        return Plan::select(['id','Plan_code', 'car_id', 'want_id', 'car_customer_id', 'want_customer_id', 'car_creater', 'want_creater', 'creater', 'status'])
-                       ->where('car_id', $car_id)
-                       ->where('want_id', $want_id)
-                       ->where('creater', Auth::id())
-                       ->first();
+        return $info;
+
     }
 
     //约车状态转换，暂时只有激活-废弃转换
@@ -209,35 +206,6 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
          
             $follow_info->save();
             $Plan->save(); 
-
-            return $Plan;
-        });
-    }
-
-    public function quicklyFollow($id){
-
-        DB::transaction(function() use ($id){
-
-            $Plan         = Plan::select($this->select_columns)->findorFail($id); //约车对象
-            $follow_info = new PlanFollow(); //约车跟进对象
-
-            $update_content = collect([Auth::user()->nick_name.'例行跟进'])->toJson();
-            
-            // 约车编辑信息
-            $Plan->creater_id = Auth::id();
-            $Plan->Plan_status = '1';
-
-            // 约车跟进信息
-            $follow_info->Plan_id       = $id;
-            $follow_info->user_id      = Auth::id();
-            $follow_info->follow_type  = '1';
-            $follow_info->operate_type = '2';
-            $follow_info->description  = collect($update_content)->toJson();
-            $follow_info->prev_update  = $Plan->updated_at;
-         
-            $follow_info->save();
-            $Plan->save();
-            $Plan->touch();
 
             return $Plan;
         });

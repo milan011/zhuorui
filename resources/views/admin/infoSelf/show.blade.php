@@ -70,14 +70,14 @@
 <div class="row-fluid">
 	<div class="box span12" style="padding:10px;">
 
-		<p class="title">[客户]:{{$info->name}}($info->user_telephone)</p>
+		<p class="title">[客户]:{{$info->name}}({{($info->user_telephone)}})</p>
 
 		<div class="col-xs-12">
 			<p class="detial">
 				
 				<span>
 					<i>客户经理:</i>
-					{{$info->manage_name}}
+					{{$info->manage_name}}({{$info->manage_telephone}})
 				</span>
 				<span>
 					<i>项目:</i>

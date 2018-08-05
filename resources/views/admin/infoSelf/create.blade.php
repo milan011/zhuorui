@@ -36,6 +36,13 @@
                 <div class="panel-body">
                     <form action="{{route('infoSelf.store')}}" id="manager_store" class="form-horizontal" method="post">
                     {!! csrf_field() !!}
+                    <!-- 新号码 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">新号码:</label>
+                            <div class="col-md-4">
+                                <input type="text"  name="new_telephone" placeholder="新号码" class="form-control" value="{{old('new_telephone')}}" />
+                            </div>
+                        </div>
                         <!-- 项目名称 -->
                         <div class="form-group">
                             <label class="col-md-1 control-label"><font style="color:red;">*</font>项目名称:</label>
@@ -77,13 +84,6 @@
                             <label class="col-md-1 control-label">联系电话:</label>
                             <div class="col-md-4">
                                 <input type="text"  name="telephone" placeholder="联系电话" class="form-control" value="{{old('telephone')}}" />
-                            </div>
-                        </div>
-                        <!-- 新号码 -->
-                        <div class="form-group">
-                            <label class="col-md-1 control-label">新号码:</label>
-                            <div class="col-md-4">
-                                <input type="text"  name="new_telephone" placeholder="新号码" class="form-control" value="{{old('new_telephone')}}" />
                             </div>
                         </div>
                         <!-- UIM码 -->
@@ -178,8 +178,8 @@
 <script src="{{URL::asset('yazan/assets/plugins/multi-select/js/jquery.multi-select.js')}}"></script>
 <script src="{{URL::asset('yazan/assets/plugins/multi-select/js/jquery.quicksearch.js')}}"></script>
 <script src="{{URL::asset('yazan/assets/js/form-select.js')}}"></script>
-<!-- 引入user模块js -->
-<!-- <script src="{{URL::asset('yazan/js/user.js')}}"></script> -->
+<!-- 引入副卡处理模块js -->
+<script src="{{URL::asset('yazan/js/fuka.js')}}"></script>
 <script>
     $(document).ready(function(){
         //表单验证
@@ -229,31 +229,6 @@
                 },          
             }
         }); 
-
-        // 删除副卡
-        $("#fuka_info").on("click",".fuka_del", function() {
-
-            // 删除对应副卡信息及按钮本身
-            $(this).prev().remove();
-            $(this).remove();
-            // console.log($(this).prev());
-        });
-
-        //增加副卡
-        $('#fuka_add').click(function(){
-
-            var form_fuka = $('.fuka_list').first().clone(true);
-            var form_del_button = '';
-           
-
-            form_del_button += '<button style="display: inline-block;width:20%;margin-left:2px;" type="button" class="btn btn-danger fuka_del">删除</button>';
-            
-            // console.log(form_fuka);return false;
-            $(form_fuka).val('');
-            $('#fuka_add').after(form_del_button);
-            $('#fuka_add').after(form_fuka);
-            
-        });
     });
 </script>
 @endsection
