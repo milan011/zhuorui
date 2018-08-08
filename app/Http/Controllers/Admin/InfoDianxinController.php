@@ -17,17 +17,17 @@ use App\Http\Requests\Cars\StoreCarsRequest;*/
 
 class InfoDianxinController extends Controller
 {   
-    protected $goodsPrice;
+    protected $infoDianxin;
     
 
     public function __construct(
 
-        GoodsPriceRepositoryContract $goodsPrice
+        InfoDianxinRepositoryContract $infoDianxin
         /*BrandRepositoryContract $brands,
         ShopRepositoryContract $shop*/
     ) {
     
-        $this->goodsPrice = $goodsPrice;
+        $this->infoDianxin = $infoDianxin;
         /*$this->brands = $brands;
         $this->shop = $shop;*/
 
@@ -37,12 +37,16 @@ class InfoDianxinController extends Controller
 
     /**
      * Display a listing of the resource.
-     * 所有车源列表
+     * 所有信息列表
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
+        $infos = $this->infoDianxin->getAllDianXinInfos($request);
         
+        return view('admin.infoDianxin.index',compact(
+            'infos'
+        ));
     }
 
     /**
@@ -188,5 +192,16 @@ class InfoDianxinController extends Controller
             'status'      => 1,
             'msg'         => '修改成功',
         ));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     * 错误页面
+     * @param  
+     * @return \Illuminate\Http\Response
+     */
+    public function error()
+    {
+        return view('admin.errors.icon');
     }
 }

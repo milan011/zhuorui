@@ -104,7 +104,7 @@ class Local extends AbstractAdapter
                 throw new Exception(sprintf('Impossible to create the root directory "%s".', $root));
             }
         }
-
+        // p(realpath($root));
         return realpath($root);
     }
 
@@ -125,19 +125,17 @@ class Local extends AbstractAdapter
     {
         $location = $this->applyPathPrefix($path);
         $this->ensureDirectory(dirname($location));
-
         if (($size = file_put_contents($location, $contents, $this->writeFlags)) === false) {
+            p('3');
             return false;
         }
-
-        $type = 'file';
+        $type = 'file';      
         $result = compact('contents', 'type', 'size', 'path');
-
         if ($visibility = $config->get('visibility')) {
+            p($visibility);
             $result['visibility'] = $visibility;
             $this->setVisibility($path, $visibility);
         }
-
         return $result;
     }
 

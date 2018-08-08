@@ -34,6 +34,7 @@ class Filesystem
      */
     public function get($path, $lock = false)
     {
+        // dd($path);
         if ($this->isFile($path)) {
             return $lock ? $this->sharedGet($path) : file_get_contents($path);
         }

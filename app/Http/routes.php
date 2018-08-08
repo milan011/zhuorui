@@ -44,17 +44,27 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::match(['get', 'post'], 'package/index', 'PackageController@index')->name('package.index');
 	//电信导入信息管理index
 	Route::match(['get', 'post'], 'infoDianxin/index', 'InfoDianxinController@index')->name('infoDianxin.index');
+	Route::get( 'infoDianxin/error', 'InfoDianxinController@error')->name('infoDianxin.error');
 	Route::post('infoDianxin/checkRepeat', 'InfoDianxinController@checkRepeat')->name('infoDianxin.checkRepeat');
 	
 	//ajax删除订单商品
 	/*Route::post('infoSelfGoods/ajaxDelete', 'infoSelfPackageController@ajaxDelete')->name('infoSelfGoods.ajaxDelete');
 	Route::post('goodsPrice/ajaxUpdatePrice', 'GoodsPriceController@ajaxUpdatePrice')->name('goodsPrice.ajaxUpdatePrice');*/
 	//导出订单
-	Route::post('infoDianxin/import', 'infoDianxinController@import')->name('infoDianxin.import'); //Excel导入
+	Route::match(['get', 'post'],'infoDianxin/import', 'ExcelController@import')->name('infoDianxin.import'); //Excel导入
 	// Route::post('excel/export','ExcelController@export')->name('infoSelf.export'); //Excel路由
 
 	Route::get('role/{id}/editPermission', 'RoleController@editPermission')->name('role.editPermission');    
     Route::put('role/updatePermission', 'RoleController@updatePermission')->name('role.updatePermission');
+
+    // 文件上传index
+	// get('admin/upload', 'UploadController@index');
+
+	// 添加如下路由
+	Route::post('admin/upload/file', 'UploadController@uploadFile'); //文件导入
+	//delete('admin/upload/file', 'UploadController@deleteFile');
+	//post('admin/upload/folder', 'UploadController@createFolder');
+	//delete('admin/upload/folder', 'UploadController@deleteFolder');
 
 	Route::resource('user', 'UserController'); //用户管理资源路由
 	Route::resource('infoDianxin', 'InfoDianxinController'); //电信导入管理资源路由

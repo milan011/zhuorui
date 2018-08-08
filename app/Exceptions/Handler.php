@@ -66,12 +66,40 @@ class Handler extends ExceptionHandler
                 return '大哥，没找着啊！';
             }
         }*/
+
+        if ($e instanceof HttpException) {
+            $code = $e->getStatusCode();
+            p('哥我异常了!');
+            dd($code);
+            if (view()->exists('errors.' . $code)) {
+                $message  = $e->getMessage();
+                return response()->view('errors.' . $e->getStatusCode(), ['message'=>$message], $e->getStatusCode());
+            }
+        }       
         
         if(($e instanceof \Illuminate\Database\QueryException)){
             p('ma ge bi');
             dd($e);
         }
 
+        /*if(($e instanceof Exception)){
+            p('wo kan xing');
+            return view('admin.errors.icon');
+        }*/
+
+        /*p('哥我you异常了!');
+        dd(get_parent_class($e));*/
+        
+        if(strstr($e->getFile(), 'phpexcel')){
+            /*p($e->getFile());
+            dd($e);*/
+            return redirect()->route('infoDianxin.error');
+            
+        }
+
+        /*p($e->getCode());
+        p($e->getMessage());
+        dd($e);*/
         return parent::render($request, $e);
     }
 }

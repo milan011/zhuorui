@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\UploadsManager;
 use Illuminate\Http\Request;
-// use App\Http\Requests\UploadFileRequest;
+use App\Http\Requests\File\UploadFileRequest;
 // use App\Http\Requests\UploadNewFolderRequest;
 use Illuminate\Support\Facades\File;
 
@@ -39,7 +39,7 @@ class UploadController extends Controller
         $folder = $request->get('folder').'/'.$new_folder;
     
         $result = $this->manager->createDirectory($folder);
-    
+        
         if ($result === true) {
             return redirect()
                 ->back()
@@ -99,24 +99,59 @@ class UploadController extends Controller
     /**
      * 上传文件
      */
-    public function uploadFile(Request $request)
+    public function uploadFile(UploadFileRequest $request)
     {
-        // dd('wo ca');
+        
         $file = $_FILES['file'];
+
         $fileName = $request->get('file_name');
+
         $fileName = $fileName ?: $file['name'];
-        $path = str_finish($request->get('folder'), '/') . $fileName;
+
+        // dd($file);
+
+        //文件类型约束
+        $file_types=array('xls','xlsx','csv'); 
+
+        $up_filename=$file['name'];
+        $filename_arr=explode('.', $up_filename);
+        $file_ext=array_pop($filename_arr);
+        if(!in_array($file_ext,$file_types))
+        {
+            return redirect()
+                ->back()
+                ->withErrors('你上传的文件类型不对！目前只支持'. implode(',', $file_types));
+
+            return false;
+        }
+
+        //文件大小约束
+        if($file['size'] > 2*1024*1024){
+
+            return redirect()
+                ->back()
+                ->withErrors('文件超过2MB');
+        }
+
+        $fileName = date('Y-m-d-h-i-s').'.'.$file_ext;
+        $path = str_finish($request->get('folder'), '/') . iconv('UTF-8', 'GBK', $fileName);
         $content = File::get($file['tmp_name']);
-    
+
+        /*p(public_path('uploads/dianxinExcel'));
+        p($path);
+        dd($path.'/'.$fileName);*/
+
         $result = $this->manager->saveFile($path, $content);
-    
+
+        // dd($result);
+
         if ($result === true) {
             return redirect()
-                    ->back()
-                    ->withSuccess("File '$fileName' uploaded.");
+                    ->route('infoDianxin.import')
+                    ->withFileName($fileName);
         }
     
-        $error = $result ? : "An error occurred uploading file.";
+        $error = $result ? : "错误文件请重试";
         return redirect()
                 ->back()
                 ->withErrors([$error]);

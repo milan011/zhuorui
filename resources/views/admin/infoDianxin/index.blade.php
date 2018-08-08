@@ -27,67 +27,65 @@
 	</style>
 @endsection
 
-@section('BreadcrumbTrail')
-	<ul class="breadcrumb">
-		<li>
-			<i class="icon-home"></i>
-			<a href="{{route('admin.index')}}">主页</a>  
-			<i class="icon-angle-right"></i>
-		</li>
-		<li><a href="javascript:void(0);">客户列表</a></li>
-	</ul>
+@section('BreadcrumbTrail')	
+	<section class="content-header">
+        <div class="pull-left">
+            <ol class="breadcrumb">
+                <li><a href="{{route('admin.index')}}">首页</a></li>
+                <li class="active">电信信息</li>
+            </ol>
+        </div>
+    </section>
 @endsection
 
 @section('content')
 
 @include('layouts.message')
-	<div class="row-fluid sortable">		
-		<div class="box span12">
-			<div class="box-content">
-				<div class="page-tabs">
+<section class="main-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-body">
             		<ul class="nav nav-tabs">
-            		  <li style="display: inline-block;line-height:20px;">
-						<a class="btn btn-search" href="#"><i class="halflings-icon search"></i>搜索客户</a>
-					</li>
-            		<!-- <li style="display: inline-block;line-height:20px;float:right;">
-						<a class="btn btn-primary" href="{{route('admin.customer.create')}}">添加客户</a>
-					</li> -->
-					<li style="display:inline-block;line-height:20px;">
-						<a href="#" onclick="window.history.go(-1);return false;" class="btn ">返回</a>
-					</li>
+            		  	<li style="display: inline-block;line-height:20px;">
+                            <a href="#modal-select" data-toggle="modal" class="btn btn-primary btn-sm">搜索信息</a>
+						</li>
+            		  	<li style="display: inline-block;line-height:20px;float:right;">
+							<button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#modal-file-upload">
+                				<i class="fa fa-upload"></i> 导入
+            				</button>
+						</li>
+						<li style="display:inline-block;line-height:20px;">
+							<a href="#" onclick="window.history.go(-1);return false;" class="btn ">返回</a>
+						</li>
             		</ul>
         		</div>
 
 				<table  class="table table-striped table-bordered">
 					<thead>
 						<tr>
-							<th>客户</th>
-							<th>电话</th>
-							<!-- <th>性别</th> -->
+							<th>编号</th>
+							<th>返还号码</th>
+							<!-- <th>性别</th>
 							<th>来源</th>						
 							<th>创建</th>
 							<th>负责人</th>
-							<th>门店</th>
+							<th>门店</th> -->
 							<th>操作</th>
 						</tr>
 					</thead> 
 					<tbody>
-						@foreach ($customers as $customer)
+						@foreach ($infos as $info)
     					<tr>
-							<td>{{$customer->name}}</td>							
-							<td>{{$customer->telephone}}</td>
-							<!-- <td>@if($customer->sex == '1') 男 @else 女 @endif</td>							 -->
-							<td>{{$customer_res[$customer->customer_res]}}</td>								
-							<td>{{substr($customer->created_at, 0 ,10)}}</td>		
-							<td>{{$customer->belongsToUser->nick_name or ''}}</td>
-							<td>{{$customer->belongsToShop->shop_name}}</td>		
+							<td>{{$info->code}}</td>							
+							<td>{{$info->telephone}}</td>		
 							<td class="center">
 								
 								<div class="btn-group">
-									<a class="btn btn-success" href="{{route('admin.customer.edit', ['customer'=>$customer->id])}}">
+									<a class="btn btn-success" href="{{route('infoDianxin.edit', ['info'=>$info->id])}}">
 										<i class="icon-edit icon-white"></i> 编辑
 									</a>
-									<a class="btn btn-warning" href="{{route('admin.customer.show', ['customer'=>$customer->id])}}">
+									<a class="btn btn-warning" href="{{route('infoDianxin.show', ['info'=>$info->id])}}">
 										查看
 									</a>
 								</div>							
@@ -95,51 +93,93 @@
 						</tr>
 						@endforeach							
 					</tbody>
-				</table>
-				<div class="pagination pagination-centered">
-					 {!! $customers->links() !!}
-				</div> 		
-			</div>			
-		</div>
-	</div>
-	<div class="modal hide fade" id="myModal">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal">×</button>
-			<h3>车源搜索</h3>
-		</div>
-		<div class="modal-body"">
-			<form class="form-horizontal" id="condition" action="{{route('admin.customer.index')}}/index" method="post">
-				{!! csrf_field() !!}
-				<fieldset>
-					<div class="control-group">
-						<label class="control-label" for="name">客户</label>
-						<div class="controls">
-						  	<input class="input-xlarge focused" name="name" id="name" type="text" value="">
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label" for="telephone">电话</label>
-						<div class="controls">
-						  	<input class="input-xlarge focused" name="telephone" id="telephone" type="text" value="">
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label" for="begin_date">日期范围</label>
-						<div class="controls">
-							<input type="text" class="input-xlarge date-picker one_line" name="begin_date" id="begin_date" value="{{$select_conditions['begin_date'] or ''}}" placeholder="开始日期" >
-							<input type="text" class="input-xlarge one_line date-picker" name="end_date" id="end_date" value="{{$select_conditions['end_date'] or ''}}" placeholder="结束日期">
-						</div>
-					</div>
-								  
-				</fieldset>
-				<div class="modal-footer">
-				</div>
-				<a href="javascript:void(0);" class="btn" data-dismiss="modal">关闭</a>
-				<button type="submit" class="btn btn-primary">搜索</button>
-			</form>	
-		</div>						         
-	</div>		
+				</table>		
+			</div>
+            <div class="col-md-6 col-sm-12">
+                <div class="dataTables_paginate paging_simple_numbers" id="datatables_paginate">
+                	<div class="pagination pagination-centered">
+                	    {!! $infos->links() !!}
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div id="modal-select" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" data-dismiss="modal" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 id="myModalLabel" class="modal-title">信息搜索</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="condition" action="{{route('infoDianxin.index')}}/index" method="post">
+                    {!! csrf_field() !!}
+                        <fieldset>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="text" value="{{$select_conditions['user_telephone'] or ''}}"  name="user_telephone" placeholder="客户电话" class="col-md-12 form-control mbm" />
+                                <input type="text" name="date" value="{{$select_conditions['date'] or ''}}" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
+                                <label class="control-label" for="category_type">信息状态:</label>
+                                <select name="status" class="col-md-4 form-control mbm">
+                                    <option value=''>不限</option>                                        
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">搜索</button>
+                            <a href="javascript:void(0);" class="btn" data-dismiss="modal">关闭</a>                            
+                        </div> 
+                        </fieldset>                      
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+ <!-- 上传文件 -->
+<div class="modal fade" id="modal-file-upload">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="/admin/upload/file" class="form-horizontal" enctype="multipart/form-data">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="folder" value="{{ $folder or '' }}">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        ×
+                    </button>
+                    <h4 class="modal-title">Excel导入</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="file" class="col-sm-3 control-label" style="padding-top: 4px;">
+                            Excel文件:
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="file" id="file" name="file">
+                        </div>
+                    </div>
+                    <div style="display: none;" class="form-group">
+                        <label for="file_name" class="col-sm-3 control-label">
+                            Optional Filename
+                        </label>
+                        <div class="col-sm-4">
+                            <input type="text" id="file_name" name="file_name" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        取消
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        导入
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+</section>
 @endsection
 
 @section('script_content')
@@ -148,6 +188,7 @@
 <!-- 引入日历插件 -->
 <script src="{{URL::asset('js/tcl/bootstrap-datepicker.js')}}"></script> 
 <script src="{{URL::asset('js/tcl/locales/bootstrap-datepicker.zh-CN.js')}}"></script> 
+<script src="{{URL::asset('yazan/assets/plugins/jquery-file-input/file-input.js')}}"></script> 
 <!-- 引入确认框js -->
 <!-- <script src="{{URL::asset('js/tcl/confirm.js')}}"></script>  -->
 <script>
@@ -168,6 +209,11 @@
 			$('#condition').submit();
 			return false;
 		});  
+
+		// 初始化数据
+    	$/*(function() {
+    	    $("#uploads-table").DataTable();
+    	});*/
 	});
 </script>
 @endsection

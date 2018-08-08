@@ -17,21 +17,21 @@ use Debugbar;
 class InfoDianxinRepository implements InfoDianxinRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['id', 'goods_id', 'price_level', 'price_status', 'goods_price', 'created_at'];
+    protected $select_columns = ['id','code', 'name', 'zm_type', 'jiakuan', 'refunds', 'yongjin', 'balance_month', 'user_telephone', 'manage_telephone', 'new_telephone', 'project_name', 'side_number', 'collections_type', 'creater_id', 'status', 'remark'];
 
     // 根据ID获得车源信息
     public function find($id)
     {
-        return Goods::select($this->select_columns)
+        return InfoDianxin::select($this->select_columns)
                    ->findOrFail($id);
     }
 
     // 根据不同参数获得商品列表
-    public function getAllGoods($request)
+    public function getAllDianXinInfos($request)
     {   
         // dd($request->all());
         // $query = Order::query();  // 返回的是一个 QueryBuilder 实例
-        $query = new Goods();       // 返回的是一个Order实例,两种方法均可
+        $query = new InfoDianxin();       // 返回的是一个Order实例,两种方法均可
 
         $query = $query->addCondition($request->all()); //根据条件组合语句
      

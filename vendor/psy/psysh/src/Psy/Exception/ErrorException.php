@@ -31,7 +31,7 @@ class ErrorException extends \ErrorException implements Exception
     public function __construct($message = '', $code = 0, $severity = 1, $filename = null, $lineno = null, $previous = null)
     {
         $this->rawMessage = $message;
-
+        
         if (!empty($filename) && preg_match('{Psy[/\\\\]ExecutionLoop}', $filename)) {
             $filename = '';
         }

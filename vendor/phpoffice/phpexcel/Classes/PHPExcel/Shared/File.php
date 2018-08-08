@@ -140,10 +140,11 @@ class PHPExcel_Shared_File
 			//  use upload-directory when defined to allow running on environments having very restricted
 			//      open_basedir configs
 			 // dd(self::$_useUploadTempDirectory);
+			 // dd(ini_get('upload_tmp_dir'));
 
 			if (ini_get('upload_tmp_dir') !== FALSE) {
 				if ($temp = ini_get('upload_tmp_dir')) {
-					$temp = "F:/phpStudy/WWW\www.wmyz.net/Temp";
+					$temp = "F:/phpStudy/WWW\www.zhuorui.net/Temp";
 					if (file_exists($temp))
 						return realpath($temp);
 				}

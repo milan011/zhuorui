@@ -6,7 +6,7 @@ interface InfoDianxinRepositoryContract
     
     public function find($id);
     
-    public function getAllGoods($requestData);
+    public function getAllDianXinInfos($requestData);
 
     public function create($requestData);
 
