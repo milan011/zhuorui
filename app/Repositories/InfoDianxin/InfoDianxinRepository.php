@@ -17,7 +17,7 @@ use Debugbar;
 class InfoDianxinRepository implements InfoDianxinRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['id','code', 'name', 'zm_type', 'jiakuan', 'refunds', 'yongjin', 'balance_month', 'user_telephone', 'manage_telephone', 'new_telephone', 'project_name', 'side_number', 'collections_type', 'creater_id', 'status', 'remark'];
+    protected $select_columns = ['id','code', 'name', 'zm_type', 'jiakuan', 'refunds', 'balance_month', 'return_telephone','yongjin', 'netin', 'creater_id', 'status', 'remark'];
 
     // 根据ID获得车源信息
     public function find($id)

@@ -25,7 +25,7 @@ class InfoDianxin extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['id','code', 'name', 'zm_type', 'jiakuan', 'refunds', 'yongjin', 'balance_month', 'user_telephone', 'manage_telephone', 'new_telephone', 'project_name', 'side_number', 'collections_type', 'creater_id', 'status', 'remark'];
+    protected $fillable = ['id','code', 'name', 'zm_type', 'jiakuan', 'refunds', 'balance_month', 'return_telephone','yongjin', 'netin', 'creater_id', 'status', 'remark'];
 
     /**
      * The attributes excluded from the model's JSON form.
