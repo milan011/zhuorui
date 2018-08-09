@@ -1,7 +1,7 @@
 <?php 
 	namespace App\Exceptions; 
 
-	class ErrorException extends \Exception{ 
+	class ExcelException extends \Exception{ 
 
 		function __construct($msg='', $code=100){ 
 

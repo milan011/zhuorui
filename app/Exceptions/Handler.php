@@ -82,17 +82,18 @@ class Handler extends ExceptionHandler
             dd($e);
         }
 
-        /*if(($e instanceof Exception)){
-            p('wo kan xing');
-            return view('admin.errors.icon');
-        }*/
+        if(($e instanceof ExcelException)){ //Excel导入异常
+            /*p('wo kan xing');
+            dd($e);*/
+            return redirect()->route('infoDianxin.index')->withErrors($e->getMessage());
+        }
 
         /*p('哥我you异常了!');
         dd(get_parent_class($e));*/
         
         if(strstr($e->getFile(), 'phpexcel')){
-            /*p($e->getFile());
-            dd($e);*/
+            // p($e->getFile());
+            dd($e);
             return redirect()->route('infoDianxin.error');
             
         }

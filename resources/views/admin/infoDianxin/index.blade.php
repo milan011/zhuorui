@@ -158,6 +158,14 @@
                             <input type="file" id="file" name="file">
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label style="padding-top: 0px;" for="file_name" class="col-sm-3 control-label">
+                            注意:
+                        </label>
+                        <div class="col-sm-8">
+                            <span style="color:red;">本系统只会导Excel文件的第一个sheet</span>
+                        </div>
+                    </div>
                     <div style="display: none;" class="form-group">
                         <label for="file_name" class="col-sm-3 control-label">
                             Optional Filename

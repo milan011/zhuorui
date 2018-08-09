@@ -74,10 +74,21 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
         // p($goods->hasManyGoodsPrice->toArray());exit;
     }
 
-    // 创建车源
+    // 创建信息
     public function create($requestData)
     {   
-                 
+        $infoDianxin = new InfoDianxin();
+        // $input =  array_replace($requestData->all());
+
+        // dd($requestData);
+        
+        $requestData['creater_id'] = Auth::id();
+        // dd($input);
+
+        $infoDianxin = $infoDianxin->insertIgnore($requestData);
+
+        Session::flash('sucess', '添加成功');
+        return $infoDianxin;     
     }
 
     // 修改车源

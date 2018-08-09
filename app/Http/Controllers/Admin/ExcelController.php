@@ -14,24 +14,25 @@ use App\Http\Controllers\Controller;
 use App\OrderGoods;
 use App\User;*/
 
-use App\Repositories\InfoSelf\InfoSelfRepositoryContract;
+// use App\Repositories\InfoSelf\InfoSelfRepositoryContract;
+use App\Repositories\InfoDianxin\InfoDianxinRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
 
 use Excel;
 
 class ExcelController extends Controller
 {   
-    protected $infoSlef;
+    protected $infoDianxin;
     protected $user;
 
     public function __construct(
 
-        InfoSelfRepositoryContract $infoSlef,
+        InfoDianxinRepositoryContract $infoDianxin,
         UserRepositoryContract $user
     ) {
     
-        $this->order    = $infoSlef;
-        $this->user     = $user;
+        $this->infoDianxin = $infoDianxin;
+        $this->user        = $user;
         // $this->middleware('brand.create', ['only' => ['create']]);
     }
 
@@ -51,16 +52,80 @@ class ExcelController extends Controller
         
         Excel::load($filePath, function($reader) {
                 
-            $table = $reader->all();
+            $tables = $reader->all();
             // $table = $reader->getSheet(0)->toArray(); //只获取第一个sheet
             // $table = $reader->toArray();
-            dd($table);
-            foreach ($table as $key => $sheet) {
-                dd($sheet);
+            $table = $tables[0];
+            
+            // dd($table->isEmpty()); //表是否为空
+
+            if($table->isEmpty()){
+                // p('hehe');exit;
+                throw new \App\Exceptions\ExcelException('您导入的表是空表');
             }
+
+            $table = $table->unique(); //清除重复数据
+
+            //表title信息
+            $table_key = array("套餐名称","返款号码","返款金额","价款","结算月","佣金方案","返还日期");
+
+            foreach ($table_key as $key => $value) {
+                # 判断传入的表数据是否符合title
+                // dd($table[0]);
+                if(!$table[0]->has($value)){
+                    throw new \App\Exceptions\ExcelException('您导入的表第一行不符合要求,请下载标准表格');
+                }
+            }           
+
+            foreach ($table as $key => $value) {
+                // 表每一行都必须有数据
+                foreach ($value as $k => $v) {
+                   if(empty($v)){
+                        throw new \App\Exceptions\ExcelException('您导入的表有空数据,请填写数据后导入');
+                   }
+                }
+            }
+
+            $table = $table->chunk(10); //循环处理数据每次处理10条
+            /*$num = (string)2.0;
+            dd($num);*/
+            // dd($table);
+            
+            $success_count = 0;         
+            
+            foreach ($table as $key => $value) {
+                $data = [];
+
+                foreach ($value as $k => $v) {
+
+                    $row["name"]             = trim($v['套餐名称']);//套餐名称
+                    $row["return_telephone"] = (string)trim($v['返款号码']);//返款号码
+                    $row["refunds"]          = trim($v['返款金额']);//返款金额
+                    $row["yongjin"]          = trim($v['佣金方案']);//佣金方案
+                    $row["balance_month"]    = (string)trim($v['结算月']);//结算月
+                    $row["netin"]            = (string)trim($v['返还日期']);//返还日期
+                    $row["jiakuan"]          = trim($v['价款']);//价款
+
+                    array_push($data, $row);
+                }
+
+                //插入
+                foreach($data as $d){
+                    if(!$d)continue;
+
+                    $infoDianxin = $this->infoDianxin->create($d);
+
+                    /*DB::transaction(function ()use($d) {//一些导入操作
+                        $insert_id = DB::table("zr_info_dianx")->insertGetId($d);
+                        //一些数据库操作
+                    });*/
+                    $success_count++;
+                }
+            }
+            dd($data);
             try {
                 $data = [];
-                foreach ($table as $v) {
+                foreach ($table[0] as $v) {
                     try{
                         if ($v[0] == "姓名" && $v[1] == "就职单位" && $v[2] == "联系电话") {
                             continue;
