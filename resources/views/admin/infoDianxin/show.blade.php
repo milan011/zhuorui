@@ -52,164 +52,126 @@
 
 <!-- 面包屑 -->
 @section('BreadcrumbTrail')
-<ul class="breadcrumb">
-	<li>
-		<i class="icon-home"></i>
-		<a href="{{route('admin.index')}}">Home</a> 
-		<i class="icon-angle-right"></i>
-	</li>
-	<li>
-		<i class="icon-home"></i>
-		<a href="{{route('admin.customer.index')}}/index">客户列表</a> 
-		<i class="icon-angle-right"></i>
-	</li>
-	<li><a href="javascript:void(0);">客户详情</a></li>
-</ul>
+<section class="content-header">
+        <div class="pull-left">
+            <ol class="breadcrumb">
+                <li><a href="{{route('admin.index')}}">首页</a></li>
+                <li><a href="{{route('infoSelf.index')}}">信息列表</a></li>
+                <li class="active">信息详情</li>
+            </ol>
+        </div>
+    </section>
 @endsection
 <!-- 主体 -->
 @section('content')
 
 @include('layouts.message')
-
+<section class="main-content">
 <div class="row-fluid">
 	<div class="box span12" style="padding:10px;">
 
-		<p class="title">[客户]:{{$customer->name}}</p>
-		<!-- <p class="detial">
-			<i>客户:</i>
-			<em>{{$customer->name}}</em>
-		</p> -->
+		<p class="title">[客户]:{{$info->name}}({{($info->user_telephone)}})</p>
 
-		<div class="col-xs-4">
+		<div class="col-xs-12">
 			<p class="detial">
 				
 				<span>
-					<i>电话:</i>
-					{{$customer->telephone}}
+					<i>客户经理:</i>
+					{{$info->manage_name}}({{$info->manage_telephone}})
 				</span>
 				<span>
-					<i>地址:</i>
-					{{$customer->address}}
+					<i>项目:</i>
+					{{$info->project_name}}
 				</span>
 				<span>
-					<i>QQ:</i>
-					{{$customer->qq_number}}
+					<i>绑旧卡:</i>
+					@if($info->old_bind == 0) 是 @else 否 @endif
 				</span>
 			</p>
 		</div>
-		<div class="col-xs-4">
+		<div class="col-xs-12">
 			<p class="detial">
 				<span>
-					<i>身份证:</i>
-					{{$customer->indentily_card}}
+					<i>新号码:</i>
+					{{$info->new_telephone}}
 				</span>
 				<span>
-					<i>微信:</i>
-					{{$customer->wx_number}}
+					<i>UIM码:</i>
+					{{$info->uim_number}}
 				</span>
 				<span>
-					<i>备注:</i>
-					{{$customer->remark}}
+					<i>入网日期:</i>		
+					{{$info->netin}}			
 				</span>
 			</p>
 		</div>
-		<div class="col-xs-4">
+		<div class="col-xs-12">
 			<p class="detial">
 				<span>
-					<i>备注:</i>
-					{{$customer->remark}}
+					<i>收款:</i>
+					{{$info->collections}}
+				</span>
+				<span>
+					<i>收款方式:</i>		
+					{{$collections_type[$info->collections_type]}}			
+				</span>
+				<span>
+					<i>还款月数:</i>
+					{{$info->balance_month}}
 				</span>
 			</p>
 		</div>
-		
+		<div class="col-xs-12">
+			<p class="detial">
+				
+				<span>
+					<i>返还状态:</i>
+					{{$info_status[$info->status]}}
+				</span>
+				<span>
+					<i>创建者/日期:</i>
+					{{$info->belongsToCreater->nick_name}}/{{substr($info->created_at, 0 ,10)}}
+				</span>
+				<span>
+					<i>备注:</i>		
+					{{$info->remark}}			
+				</span>
+			</p>
+		</div>
+		<div class="col-xs-12">
+			<p class="detial">
+				<span style="display:inline;">
+					<i>副卡:</i>
+					{{$info->side_number}}
+				</span>
+				
+			</p>
+		</div>
 	</div>	
-
 </div> 
-
 <div class="row-fluid">
 	<div class="box span12" style="padding:10px;">
 
-		<p class="title">[车源信息]:{{$customer->name}}</p>
+		<p class="title">[套餐信息]</p>
 		<div class="box-content">
 			<table  class="table table-striped table-bordered">
 				<thead>
 					<tr>
-						<th>编号</th>
-						<th>名称</th>
-						<th>价格</th>
-						<th>上牌</th>
-						<th>里程</th>							
-						<th>变速箱</th>
-						<th>颜色</th>
-						<th>过户</th>
-						<th>状态</th>
-						<th>上传日期</th>
+						<th>套餐名称</th>
+						<th>返还月</th>
+						<th>返还金额</th>
 					</tr>
 				</thead> 
 				<tbody>
-					@foreach ($customer_car_list as $car)
     				<tr>
-						<td>{{$car->car_code}}</td>
-						<td>{{$car->name}}</td>
-						<td>{{$car->top_price}}万</td>							
-						<td>{{substr($car->plate_date, 0 ,10)}}</td>
-						<td>{{$car->mileage}}万公里</td>							
-						<td>{{$gearbox[$car->gearbox]}}</td>							
-						<td>{{$out_color[$car->out_color]}}</td>						
-						<td>{{$car->sale_number}}</td>							
-						<td>{{$car_stauts_config[$car->car_status]}}</td>							
-						<td>{{substr($car->created_at, 0 ,10)}}</td>	
-					</tr>
-					@endforeach							
+    					<td>{{$package_info->name}}</td>
+    					<td>{{$package_info->month_nums}}</td>
+    					<td>{{$package_info->package_price}}</td>
+    				</tr>						
 				</tbody>
-			</table>
-			<div class="pagination pagination-centered">
-				 {!! $customer_car_list->links() !!}
-			</div> 		
+			</table> 		
 		</div>		
 	</div>	
-</div> 
-
-<div class="row-fluid">
-	<div class="box span12" style="padding:10px;">
-
-		<p class="title">[求购信息]:{{$customer->name}}</p>
-		<div class="box-content">
-				<table  class="table table-striped table-bordered">
-					<thead>
-						<tr>
-							<th>编号</th>
-							<th>车型</th>
-							<th>价格</th>
-							<th>里程</th>							
-							<th>变速箱</th>
-							<th>颜色</th>
-							<th>排量</th>
-							<th>状态</th>
-							<th>上传日期</th>
-						</tr>
-					</thead> 
-					<tbody>
-						@foreach ($customer_want_list as $want)
-    					<tr>
-							<td>{{$want->want_code}}</td>
-							<td>{{$want->name}}</td>
-							<td>{{$want->bottom_price}}-{{$want->top_price}}万</td>							
-							<!-- <td>1年</td> -->
-							<td>{{$mileage_config[$want->mileage]}}</td>							
-							<td>@if($want->gearbox == 0) 不限 @else {{$gearbox[$want->gearbox]}} @endif</td>			
-							<td>{{$out_color[$want->out_color]}}</td>						
-							<td>@if($want->capacity == 0) 不限 @else {{$capacity[$want->capacity]}} @endif</td>
-							<td>{{$want_stauts_config[$want->want_status]}}</td>							
-							<td>{{substr($want->created_at, 0 ,10)}}</td>	
-						</tr>
-						@endforeach							
-					</tbody>
-				</table>
-				<div class="pagination pagination-centered">
-					 {!! $customer_want_list->links() !!}
-				</div> 		
-			</div>		
-	
-</div>   
+</div>  
+</section>
 @endsection

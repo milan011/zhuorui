@@ -41,6 +41,7 @@
 @section('content')
 
 @include('layouts.message')
+
 <section class="main-content">
     <div class="row">
         <div class="col-md-12">
@@ -50,10 +51,16 @@
             		  	<li style="display: inline-block;line-height:20px;">
                             <a href="#modal-select" data-toggle="modal" class="btn btn-primary btn-sm">搜索信息</a>
 						</li>
+						<li style="display: inline-block;line-height:20px;">
+                            <a href="{{route('infoDianxin.create')}}" data-toggle="modal" class="btn btn-primary btn-sm">添加信息</a>
+						</li>
             		  	<li style="display: inline-block;line-height:20px;float:right;">
 							<button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#modal-file-upload">
                 				<i class="fa fa-upload"></i> 导入
             				</button>
+						</li>
+						<li style="display:inline-block;line-height:20px;">
+							<a href="{{route('infoDianxin.exampleExcelDownload')}}" class="btn btn-primary btn-sm">标准表下载</a>
 						</li>
 						<li style="display:inline-block;line-height:20px;">
 							<a href="#" onclick="window.history.go(-1);return false;" class="btn ">返回</a>
@@ -64,21 +71,22 @@
 				<table  class="table table-striped table-bordered">
 					<thead>
 						<tr>
-							<th>编号</th>
 							<th>返还号码</th>
-							<!-- <th>性别</th>
-							<th>来源</th>						
-							<th>创建</th>
-							<th>负责人</th>
-							<th>门店</th> -->
+							<th>返还金额</th>
+							<th>返还月</th>						
+							<th>返还日期</th>						
+							<th>导入时间</th>
 							<th>操作</th>
 						</tr>
 					</thead> 
 					<tbody>
 						@foreach ($infos as $info)
     					<tr>
-							<td>{{$info->code}}</td>							
-							<td>{{$info->telephone}}</td>		
+							<td>{{$info->return_telephone}}</td>							
+							<td>{{$info->refunds}}</td>		
+							<td>{{$info->balance_month}}</td>		
+							<td>{{$info->netin}}</td>		
+							<td>{{$info->belongsToCreater->nick_name}}|{{substr($info->created_at, 0 ,10)}}</td>		
 							<td class="center">
 								
 								<div class="btn-group">
@@ -88,6 +96,13 @@
 									<a class="btn btn-warning" href="{{route('infoDianxin.show', ['info'=>$info->id])}}">
 										查看
 									</a>
+									<form action="{{route('infoDianxin.destroy', ['info'=>$info->id])}}" method="post" style="display: inherit;margin:0px;">
+                                    	{{ csrf_field() }}
+                                    	{{ method_field('DELETE') }}
+                                    	<button class="btn btn-danger delete-confrim" type="button">
+                                        	<i class="icon-trash icon-white"></i> 删除
+                                    	</button>
+                                	</form>
 								</div>							
 							</td>
 						</tr>

@@ -93,71 +93,47 @@ class ExcelController extends Controller
             
             $success_count = 0;         
             
-            foreach ($table as $key => $value) {
-                $data = [];
+            
+            // dd($data);
+            try {
 
-                foreach ($value as $k => $v) {
+                foreach ($table as $key => $value) {
+                    $data = [];
 
-                    $row["name"]             = trim($v['套餐名称']);//套餐名称
-                    $row["return_telephone"] = (string)trim($v['返款号码']);//返款号码
-                    $row["refunds"]          = trim($v['返款金额']);//返款金额
-                    $row["yongjin"]          = trim($v['佣金方案']);//佣金方案
-                    $row["balance_month"]    = (string)trim($v['结算月']);//结算月
-                    $row["netin"]            = (string)trim($v['返还日期']);//返还日期
-                    $row["jiakuan"]          = trim($v['价款']);//价款
+                    foreach ($value as $k => $v) {
+
+                        $row["name"]             = trim($v['套餐名称']);//套餐名称
+                        $row["return_telephone"] = (string)trim($v['返款号码']);//返款号码
+                        $row["refunds"]          = trim($v['返款金额']);//返款金额
+                        $row["yongjin"]          = trim($v['佣金方案']);//佣金方案
+                        $row["balance_month"]    = (string)trim($v['结算月']);//结算月
+                        $row["netin"]            = (string)trim($v['返还日期']);//返还日期
+                        $row["jiakuan"]          = trim($v['价款']);//价款
 
                     array_push($data, $row);
-                }
+                    }
 
-                //插入
-                foreach($data as $d){
-                    if(!$d)continue;
-
-                    $infoDianxin = $this->infoDianxin->create($d);
-
-                    /*DB::transaction(function ()use($d) {//一些导入操作
-                        $insert_id = DB::table("zr_info_dianx")->insertGetId($d);
-                        //一些数据库操作
-                    });*/
-                    $success_count++;
-                }
-            }
-            dd($data);
-            try {
-                $data = [];
-                foreach ($table[0] as $v) {
-                    try{
-                        if ($v[0] == "姓名" && $v[1] == "就职单位" && $v[2] == "联系电话") {
-                            continue;
-                        }
-                        if ($v[0] == "" && $v[1] == "" && $v[2] == "") {
-
-                        } else {
-
-                            $row["name"] = trim($v[0]);//姓名
-                            $row["address"] = trim($v[1]);//就职单位
-                            $row["phone"] = trim($v[2]);//联系电话
-
-                            array_push($data, $row);
-                        }
-                    }catch(\Exception $e){
-                        $err_count++;
-                        array_push($error,$v);//失败数据存起来后面将把失败数据导出
-                        Log::info($e);
-                        continue;
+                    //插入
+                    foreach($data as $d){
+                        if(!$d)continue;
+    
+                        $infoDianxin = $this->infoDianxin->create($d);
+    
+                        /*DB::transaction(function ()use($d) {//一些导入操作
+                            $insert_id = DB::table("zr_info_dianx")->insertGetId($d);
+                            //一些数据库操作
+                        });*/
+                        $success_count++;
                     }
                 }
-                //插入
-                foreach($data as $d){
-                    if(!$d)continue;
-                    DB::transaction(function ()use($d,$process_template) {//一些导入操作
-                        $insert_id = DB::table("zr_info_dianx")->insertGetId($d);
-                        //一些数据库操作
-                    });
-                    $success_count++;
-                }
+
                 $time_end = time();
-                return Response::json(["success" => true, "message" => "本次共导入 ".($success_count+$err_count).' 条数据 , 其中失败 '.$err_count.' 条 。 ','download'=>$download,'time'=>($time_end-$time_star)]);
+
+                /*return Response::json(["success" => true, "message" => "本次共导入 ".($success_count+$err_count).' 条数据 , 其中失败 '.$err_count.' 条 。 ','download'=>$download,'time'=>($time_end-$time_star)]);*/
+                $message = "本次共导入 ".($success_count+$err_count).' 条数据';
+                // return view('admin.infoDianxin.index')->with('success', $message);
+                return redirect('/infoDianxin/index')->with('message', $message);
+
             } catch (\Exception $e) {
                 return redirect()->route('infoDianxin.error');
             }

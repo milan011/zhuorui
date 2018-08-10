@@ -50,8 +50,11 @@ class InfoDianxin extends Model
             $array['created_at'] = $now;
             $array['updated_at'] = $now;
         }
+
         DB::insert('INSERT IGNORE INTO '.$a->table.' ('.implode(',',array_keys($array)).
             ') values (?'.str_repeat(',?',count($array) - 1).')',array_values($array));
+
+        // dd(lastSql());
     }
 
     // 搜索条件处理
@@ -81,10 +84,10 @@ class InfoDianxin extends Model
         return $query;
     }
 
-    // 定义order表与order_goods表一对多关系
-    public function belongsToOrder(){
+    // 定义User表与order表一对多关系
+    public function belongsToCreater(){
 
-      return $this->belongsTo('App\Order', 'order_id', 'id');
+      return $this->belongsTo('App\User', 'creater_id', 'id')->select('id as user_id', 'nick_name', 'telephone as creater_telephone');
     }
 
     // 定义Category表与order_goods表一对多关系

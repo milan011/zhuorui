@@ -142,7 +142,7 @@
                                 <div class="col-md-1">
                                     <select class="form-control" name="netin_moth" style="display: inline-block;">
                                         @foreach($package_month as $key=>$mo)
-                                        <option @if(($netin_month) == ($mo)) selected='selected' @endif value="{{$mo}}" >{{$mo}}</option>
+                                        <option @if(($netin_month) == ($key)) selected='selected' @endif value="{{$mo}}" >{{$mo}}</option>
                                         @endforeach
                                     </select>
                                 </div>

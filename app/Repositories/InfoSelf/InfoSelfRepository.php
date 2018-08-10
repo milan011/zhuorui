@@ -96,25 +96,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
             return $info;     
     }
 
-    // 发起约车
-    public function planLaunch($requestData)
-    {   
-        $chance = Chance::findOrFail($requestData->chance_id);
-
-        if($requestData->chance_status == 1){
-            // 将对应的销售机会状态设置为待确认状态           
-            $chance->status = '2';            
-        }elseif($requestData->chance_status == 2){
-            // 将对应的销售机会状态设置为约车状态           
-            $chance->status = '3';          
-        }        
-
-        $chance->save();
-
-        return $chance;    
-    }
-
-    // 看车结果反馈
+    // 信息更新
     public function update($requestData, $id)
     {   
 

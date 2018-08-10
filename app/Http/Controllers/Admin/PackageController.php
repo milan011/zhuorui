@@ -108,6 +108,7 @@ class PackageController extends Controller
         /*p($id);
         dd($packageRequest->all());*/
         $this->package->update($packageRequest, $id);
+        // dd(redirect()->route('package.index'));
         return redirect()->route('package.index')->withInput();
     }
 

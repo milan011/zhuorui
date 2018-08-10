@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Auth;
 use Gate;
 use DB;
+use Excel;
+use Session;
+use Carbon;
 use App\Cars;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -56,34 +59,15 @@ class InfoDianxinController extends Controller
      */
     public function create()
     {
-        // dd(Auth::user());
-        $car_code = getCarCode();
-        $all_top_brands = $this->brands->getChildBrand(0);
-        /*$year_type      = config('tcl.year_type'); //获取配置文件中所有车款年份
-        $category_type  = config('tcl.category_type'); //获取配置文件中车型类别
-        $gearbox        = config('tcl.gearbox'); //获取配置文件中车型类别
-        $out_color      = config('tcl.out_color'); //获取配置文件中外观颜色
-        $inside_color   = config('tcl.inside_color'); //获取配置文件中内饰颜色
-        $sale_number    = config('tcl.sale_number'); //获取配置文件中过户次数
-        $car_type       = config('tcl.car_type'); //获取配置文件车源类型
-        $customer_res   = config('tcl.customer_res'); //获取配置文件客户来源
-        $safe_type      = config('tcl.safe_type'); //获取配置文件保险类别
-        $capacity       = config('tcl.capacity'); //获取配置文件排量*/
-        $city_id        = $this->shop->find(Auth::user()->shop_id)->city_id; //车源所在城市
-        $provence_id    = $this->shop->find(Auth::user()->shop_id)->provence_id; //车源所在省份
+        $dt = Carbon::now(); //当前日期
 
-        $area = Area::withTrashed()
-                    ->where('pid', '1')
-                    ->where('status', '1')
-                    ->get();
+        $dt_year  = $dt->year;  //当前年
+        $dt_month = $dt->month; //当前月
 
-        // dd($city_id);
-        return view('admin.car.create',compact(
-            'all_top_brands',           
-            'city_id',
-            'provence_id',
-            'area'
-        ));
+        // $managers = $this->manager->getManagers(); // 电信客户经理
+        // $packages = $this->package->getPackages(); // 电信客户经理
+
+        return view('admin.infoDianxin.create', compact('dt_year', 'dt_month'));
     }
 
     /**
@@ -94,7 +78,10 @@ class InfoDianxinController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $info = $this->infoDianxin->create($request);
+
+        return redirect('infoDianxin/index')->withInput();
     }
 
     /**
@@ -105,15 +92,15 @@ class InfoDianxinController extends Controller
      */
     public function show($id)
     {
-        $cars = $this->car->find($id);
+        $info         = array();
+        $package_info = array();
 
-        $gearbox        = config('tcl.gearbox'); //获取配置文件中变速箱类别
-        $out_color      = config('tcl.out_color'); //获取配置文件中外观颜色
-        $capacity       = config('tcl.capacity'); //获取配置文件排量
-        $category_type  = config('tcl.category_type'); //获取配置文件中车型类别
+        $info         = $this->infoDianxin->find($id);
+        $package_info = $info->hasOnePackage;
 
-        // dd($cars->hasManyImages()->get());
-        return view('admin.car.show', compact('cars', 'gearbox', 'out_color', 'capacity', 'category_type'));
+         // dd($package_info);
+
+        return view('admin.infoDianxin.show', compact('info', 'package_info'));
     }
 
     /**
@@ -124,37 +111,29 @@ class InfoDianxinController extends Controller
      */
     public function edit($id)
     {
-        $cars = $this->car->find($id);
+        $side_number_array = array();
+        $info              = $this->infoDianxin->find($id);
+        
+        // dd($info->side_number);
 
-        $area = Area::withTrashed()
-                    ->where('pid', '1')
-                    ->where('status', '1')
-                    ->get();
-        $citys = Area::withTrashed()
-                     ->where('pid', $cars->plate_provence)
-                     ->where('status', '1')
-                    ->get();
-        /*if (Gate::denies('update', $cars)) {
-            //不允许编辑,基于Policy
-            dd('no no');
-        }*/
+        $netin_date  = explode('-', $info->netin); //入网日期转数组
+        $netin_year  = $netin_date[0]; //入网年
+        $netin_month = $netin_date[1]; //入网月
 
-        foreach ($area as $key => $value) {
-            if($cars->plate_provence == $value->id){
-                $provence =  $value;
-            }
+        if(!empty($info->side_number)){
+
+            $side_number_array  = explode('|', $info->side_number); //副卡数组
         }
+        
+        // dd($side_number_array);
+        
 
-        foreach ($citys as $key => $value) {
-            if($cars->plate_city == $value->id){
-                $city =  $value;
-            }
-        }
-        // dd($cars);
-        // dd($area);
-        // dd($city);
-        return view('admin.car.edit', compact(
-            'cars','provence','city','area'
+        $managers = $this->manager->getManagers(); // 电信客户经理
+        $packages = $this->package->getPackages(); // 套餐信息
+
+
+        return view('admin.infoDianxin.edit', compact(
+            'info', 'managers', 'packages', 'netin_year', 'netin_month', 'side_number_array'
         ));
     }
 
@@ -167,8 +146,11 @@ class InfoDianxinController extends Controller
      */
     public function update(UpdateCarsRequest $carRequest, $id)
     {
-        $this->car->update($carRequest, $id);
-        return redirect()->route('admin.car.self')->withInput();
+        // dd($request->all());
+
+        $this->infoDianxin->update($request, $id);
+        
+        return redirect('infoDianxin/index')->withInput();
     }
 
     /**
@@ -179,7 +161,13 @@ class InfoDianxinController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // dd($request->all());
+
+        // dd($id);
+        $this->infoDianxin->destroy($id);
+
+        return redirect('infoDianxin/index');
+        // return redirect('order/index')->route('order.index');
     }
 
     // ajax修改商品价格
@@ -203,5 +191,144 @@ class InfoDianxinController extends Controller
     public function error()
     {
         return view('admin.errors.icon');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     * 导入文件
+     * @param  
+     * @return \Illuminate\Http\Response
+     */
+    public function importExcel(Request $request)
+    {
+        // dd(session::get('file_name'));
+        // dd(public_path('uploads/dianxinExcel'));
+        
+        $filePath = public_path('uploads/dianxinExcel/').session::get('file_name');
+        $time_star = time();//得到当前时间戳，用来在最后计算文件导入完毕后的用时
+        /*dd($filePath);
+        dd('hehe');*/
+        // $filePath = public_path('uploads\dianxinExcel/').'test'.'.xls';
+        
+        // $fielPath = "F:\phpStudy\WWW\www.zhuorui.net\public\uploads\dianxinExcel".'\\'.'test.xls';
+        // dd($filePath);
+        
+        $info_count_before = DB::table('zr_info_dianxin')->count(); //插入前总数据量
+        
+        Excel::load($filePath, function($reader) {
+                
+            $tables = $reader->all();
+            // $table = $reader->getSheet(0)->toArray(); //只获取第一个sheet
+            // $table = $reader->toArray();
+            $table = $tables[0];
+            
+            // dd($table->isEmpty()); //表是否为空
+
+            if($table->isEmpty()){
+                // p('hehe');exit;
+                throw new \App\Exceptions\ExcelException('您导入的表是空表');
+            }
+
+            $table = $table->unique(); //清除重复数据
+
+            //表title信息
+            $table_key = array("套餐名称","返款号码","返款金额","价款","结算月","佣金方案","返还日期");
+
+            foreach ($table_key as $key => $value) {
+                # 判断传入的表数据是否符合title
+                // dd($table[0]);
+                if(!$table[0]->has($value)){
+                    throw new \App\Exceptions\ExcelException('您导入的表第一行不符合要求,请下载标准表格');
+                }
+            }           
+
+            foreach ($table as $key => $value) {
+                // 表每一行都必须有数据
+                foreach ($value as $k => $v) {
+                   if(empty($v)){
+                        throw new \App\Exceptions\ExcelException('您导入的表有空数据,请填写数据后导入');
+                   }
+                }
+            }
+
+            $table = $table->chunk(10); //循环处理数据每次处理10条
+            /*$num = (string)2.0;
+            dd($num);*/
+            // dd($table);
+            
+            $success_count = 0;         
+
+            // dd(lastSql());
+            // dd($info_count_before);*/
+
+            try {
+
+                foreach ($table as $key => $value) {
+                    $data = [];
+
+                    foreach ($value as $k => $v) {
+
+                        $row["name"]             = trim($v['套餐名称']);//套餐名称
+                        $row["return_telephone"] = (string)trim($v['返款号码']);//返款号码
+                        $row["refunds"]          = trim($v['返款金额']);//返款金额
+                        $row["yongjin"]          = trim($v['佣金方案']);//佣金方案
+                        $row["balance_month"]    = (string)trim($v['结算月']);//结算月
+                        $row["netin"]            = (string)trim($v['返还日期']);//返还日期
+                        $row["jiakuan"]          = trim($v['价款']);//价款
+
+                        array_push($data, $row);
+                    }
+
+                    //插入
+                    foreach($data as $d){
+                        if(!$d)continue;
+    
+                        $infoDianxin = $this->infoDianxin->create($d);
+    
+                        /*DB::transaction(function ()use($d) {//一些导入操作
+                            $insert_id = DB::table("zr_info_dianx")->insertGetId($d);
+                            //一些数据库操作
+                        });*/
+                        $success_count++;
+                    }
+                }
+                
+                
+
+                /*return Response::json(["success" => true, "message" => "本次共导入 ".($success_count+$err_count).' 条数据 , 其中失败 '.$err_count.' 条 。 ','download'=>$download,'time'=>($time_end-$time_star)]);*/
+                // $message = "本次共导入 ".($info_count_after - $info_count_before).' 条数据';
+                //p('4');
+                //p($message);
+                // return redirect()->back();
+                // dd(redirect()->route('infoDianxin.index')->setTargetUrl($_SERVER['HTTP_REFERER']));
+                
+                //p('ful');               
+                //return redirect()->route('infoDianxin.index')->setTargetUrl($_SERVER['HTTP_REFERER']);
+                // return redirect('/infoDianxin/index')->with('message', $message);
+
+            } catch (\Exception $e) {
+                return redirect()->route('infoDianxin.error');
+            }          
+        });
+
+        /*try{
+            //导入执行代码              
+            
+        }catch(Exception $e){
+                //自定义处理异常
+        }*/ 
+        $info_count_after = DB::table('zr_info_dianxin')->count(); //插入前总数据量
+        $info_nums = $info_count_after - $info_count_before;
+
+        $message = "本次共导入 ".$info_nums.' 条数据.'.'若导入数据数目跟您表格中数目不相符,说明您表格中某些数据系统中已经存在';
+        
+        Session::flash('sucess', $message);
+
+        return redirect()->route('infoDianxin.index');
+    }
+
+    public function exampleExcelDownload()
+    {
+        return response()->download(realpath(public_path('uploads/example.xlsx')));
     }
 }

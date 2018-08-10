@@ -9,6 +9,7 @@
     <meta content="卓睿电信信息管理" name="description">
     <meta content="wcg13731080174" name="author">
     <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/global/plugins/font-awesome/css/font-awesome.min.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css')}}">
     <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/global/plugins/ionicons/css/ionicons.min.css')}}">
     <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/global/plugins/simple-line-icons/simple-line-icons.css')}}">
     <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/global/plugins/animate.css/animate.css')}}">

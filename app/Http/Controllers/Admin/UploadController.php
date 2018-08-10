@@ -120,7 +120,7 @@ class UploadController extends Controller
         {
             return redirect()
                 ->back()
-                ->withErrors('你上传的文件类型不对！目前只支持'. implode(',', $file_types));
+                ->withErrors('您上传的文件类型不对！目前只支持'. implode(',', $file_types));
 
             return false;
         }
@@ -130,7 +130,7 @@ class UploadController extends Controller
 
             return redirect()
                 ->back()
-                ->withErrors('文件超过2MB');
+                ->withErrors('您上传的文件超过2MB');
         }
 
         $fileName = date('Y-m-d-h-i-s').'.'.$file_ext;
@@ -147,7 +147,7 @@ class UploadController extends Controller
 
         if ($result === true) {
             return redirect()
-                    ->route('infoDianxin.import')
+                    ->route('infoDianxin.importExcel')
                     ->withFileName($fileName);
         }
     

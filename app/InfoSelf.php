@@ -129,16 +129,4 @@ class InfoSelf extends Model
     {
         return $this->hasOne('App\Package', 'id', 'package_id');
     }
-
-    // 定义User表与order表一对多关系
-    public function belongsToUserWithTopUser(){
-
-      return $this->belongsTo('App\User', 'user_top_id', 'id')->select('id as user_id', 'nick_name', 'telephone as user_telephone');
-    }
- 
-    // 定义order表与order_goods表一对多关系
-    public function hasManyOrderGoods()
-    {
-        return $this->hasMany('App\OrderGoods', 'order_id', 'id');
-    }
 }

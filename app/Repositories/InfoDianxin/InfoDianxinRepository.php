@@ -17,7 +17,7 @@ use Debugbar;
 class InfoDianxinRepository implements InfoDianxinRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['id','code', 'name', 'zm_type', 'jiakuan', 'refunds', 'balance_month', 'return_telephone','yongjin', 'netin', 'creater_id', 'status', 'remark'];
+    protected $select_columns = ['id','code', 'name', 'zm_type', 'jiakuan', 'refunds', 'balance_month', 'return_telephone','yongjin', 'netin', 'creater_id', 'status', 'remark','created_at'];
 
     // 根据ID获得车源信息
     public function find($id)
@@ -41,110 +41,97 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
         // $query = $query->where('car_status', $request->input('car_status', '1'));
 
         return $query->select($this->select_columns)
-                     // ->orderBy('created_at', 'desc')
+                     ->orderBy('created_at', 'desc')
                      ->paginate(10);
-    }
-
-    /**
-     * 获得系列所属商品
-     * @param  [type] $category_id [description]
-     * @return [type]              [description]
-     */
-    public function getChildGoods($category_id){
-
-        $query = new Goods();       // 返回的是一个Goods实例,两种方法均可
-
-        return $query->select($this->select_columns)
-                     ->where('category_id', $category_id)
-                     ->get();
-    }
-
-    /**
-     * 获取商品价格
-     * @param  [type] $category_id [description]
-     * @return [type]              [description]
-     */
-    public function getGoodsPrice($goods_id){
-
-        $query = new Goods();       // 返回的是一个Goods实例,两种方法均可
-
-        $goods =  $query->select($this->select_columns)->find($goods_id);
-
-        return $goods->hasManyGoodsPrice;
-        // p($goods->hasManyGoodsPrice->toArray());exit;
     }
 
     // 创建信息
     public function create($requestData)
     {   
+        $repeated = $this->isRepeat($requestData->return_telephone,$requestData->balance_month);
+
+        // dd($repeated);
+
+        if(null !== $repeated){
+            Session::flash('sucess', '该号码已经存在');
+            return $repeated;
+        }
+
         $infoDianxin = new InfoDianxin();
         // $input =  array_replace($requestData->all());
-
-        // dd($requestData);
         
         $requestData['creater_id'] = Auth::id();
-        // dd($input);
+        $requestData['netin']      = $requestData['netin_year'].'-'.$requestData['netin_moth'];
+        unset($requestData['_token']);
+        unset($requestData['netin_year']);
+        unset($requestData['netin_moth']);
 
-        $infoDianxin = $infoDianxin->insertIgnore($requestData);
+        $infoDianxin = $infoDianxin->insertIgnore($requestData->all());
 
-        Session::flash('sucess', '添加成功');
+        // Session::flash('sucess', '添加成功');
         return $infoDianxin;     
     }
 
-    // 修改车源
+    // 信息更新
     public function update($requestData, $id)
-    {
-               
+    {   
+
+        $repeated = $this->isRepeat($requestData->new_telephone);
+
+        $info   = InfoDianxin::select($this->select_columns)->findorFail($id); //获取信息
+        $manager = Manager::findOrFail($requestData['manager']);//获得客户经理信息
+
+        // 处理副卡信息
+        // dd($requestData->all());
+        if (!empty($requestData['side_numbers'])){
+            $side_number = implode("|",  array_unique($requestData['side_numbers']));
+        }
+
+        // dd($side_number);
+        
+        $info->name             = $requestData->name;
+        $info->user_telephone   = $requestData->telephone;
+        $info->manage_name      = $manager->name;
+        $info->manage_telephone = $manager->telephone;
+        $info->manage_id        = $requestData->manager;
+        $info->project_name     = $requestData->project_name;
+        // $info->new_telephone    = $requestData->new_telephone;
+        $info->uim_number       = $requestData->uim_number;
+        $info->collections      = $requestData->collections;
+        $info->side_number      = $side_number;
+        $info->collections_type = $requestData->collections_type;
+        $info->netin            = $requestData->netin_year.'-'.$requestData->netin_moth;
+        $info->old_bind         = isset($requestData->old_bind) ? '1' : '0';
+
+
+        Session::flash('sucess', '信息修改成功');
+        $info->save();
+
+        return $info;                     
     }
 
-    // 删除车源
+    // 删除信息
     public function destroy($id)
     {
         try {
-            $car = Order::findorFail($id);
-            $car->delete();
-            Session::flash('sucess', '删除车源成功');
+            $info = InfoDianxin::findorFail($id);
+            $info->status = '0';
+            $info->save();
+            Session::flash('sucess', '删除约车成功');
            
         } catch (\Illuminate\Database\QueryException $e) {
-            Session()->flash('faill', '删除车源失败');
+            Session()->flash('faill', '删除约车失败');
         }      
+    } 
+
+    //判断电话号码是否重复
+    public function isRepeat($return_telephone, $balance_month){
+
+        $info = InfoDianxin::where('return_telephone', $return_telephone)
+                        ->where('balance_month', $balance_month)
+                        ->first();
+
+        return $info;
+
     }
-
-    // ajax修改价格
-    public function updateAjax($requestData){
-        
-        // p($requestData->all());exit;
-        $need_compare_data = $requestData->except('goods_id');
-        $select_fied = ['id', 'goods_id', 'price_level', 'goods_price'];
-        foreach ($need_compare_data as $key => $value) {
-
-            $price_obj = GoodsPrice::select($select_fied)
-                                   ->where('price_level', $key)
-                                   ->where('goods_id', $requestData->goods_id)
-                                   ->first();
-            // p(lastSql());
-            // p($price_obj->goods_price);exit;
-            if($value != $price_obj->goods_price){
-                $price_obj->goods_price = $value;
-                $price_obj->save();
-                // p($price_obj);
-            }
-        }
-
-        return $price_obj;
-    }
-
-    
-
-    
-
-    
-
-   
-
-    
-
-    
-
-    
 }

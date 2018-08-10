@@ -51,7 +51,8 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	/*Route::post('infoSelfGoods/ajaxDelete', 'infoSelfPackageController@ajaxDelete')->name('infoSelfGoods.ajaxDelete');
 	Route::post('goodsPrice/ajaxUpdatePrice', 'GoodsPriceController@ajaxUpdatePrice')->name('goodsPrice.ajaxUpdatePrice');*/
 	//导出订单
-	Route::match(['get', 'post'],'infoDianxin/import', 'ExcelController@import')->name('infoDianxin.import'); //Excel导入
+	Route::match(['get', 'post'],'infoDianxin/importExcel', 'InfoDianxinController@importExcel')->name('infoDianxin.importExcel'); //Excel导入
+	Route::get('infoDianxin/exampleExcelDownload', 'InfoDianxinController@exampleExcelDownload')->name('infoDianxin.exampleExcelDownload'); //下载标准格式表
 	// Route::post('excel/export','ExcelController@export')->name('infoSelf.export'); //Excel路由
 
 	Route::get('role/{id}/editPermission', 'RoleController@editPermission')->name('role.editPermission');    

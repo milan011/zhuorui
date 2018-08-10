@@ -246,4 +246,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 		return $this->hasMany('App\Package', 'creater_id', 'id');
 	}
+
+	// 定义User表与InfoSelf表一对多关系
+	public function hasManyCreaterInfoSelf() {
+
+		return $this->hasMany('App\InfoSelf', 'creater_id', 'id');
+	}
+
+	// 定义User表与InfoDianxin表一对多关系
+	public function hasManyCreaterInfoDianxin() {
+
+		return $this->hasMany('App\InfoDianxin', 'creater_id', 'id');
+	}
 }
