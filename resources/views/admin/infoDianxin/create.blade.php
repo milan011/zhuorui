@@ -36,7 +36,7 @@
                 <div class="panel-body">
                     <form action="{{route('infoDianxin.store')}}" id="manager_store" class="form-horizontal" method="post">
                     {!! csrf_field() !!}
-                    <!-- 返款号码 -->
+                    	<!-- 返款号码 -->
                         <div class="form-group">
                             <label class="col-md-1 control-label">返款号码:</label>
                             <div class="col-md-4">

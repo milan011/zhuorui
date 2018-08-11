@@ -114,26 +114,15 @@ class InfoDianxinController extends Controller
         $side_number_array = array();
         $info              = $this->infoDianxin->find($id);
         
-        // dd($info->side_number);
+        // dd($info);
 
         $netin_date  = explode('-', $info->netin); //入网日期转数组
         $netin_year  = $netin_date[0]; //入网年
         $netin_month = $netin_date[1]; //入网月
 
-        if(!empty($info->side_number)){
-
-            $side_number_array  = explode('|', $info->side_number); //副卡数组
-        }
-        
-        // dd($side_number_array);
-        
-
-        $managers = $this->manager->getManagers(); // 电信客户经理
-        $packages = $this->package->getPackages(); // 套餐信息
-
 
         return view('admin.infoDianxin.edit', compact(
-            'info', 'managers', 'packages', 'netin_year', 'netin_month', 'side_number_array'
+            'info','netin_year', 'netin_month'
         ));
     }
 
@@ -144,7 +133,7 @@ class InfoDianxinController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCarsRequest $carRequest, $id)
+    public function update(Request $request, $id)
     {
         // dd($request->all());
 

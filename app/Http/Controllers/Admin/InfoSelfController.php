@@ -39,7 +39,7 @@ class InfoSelfController extends Controller
 
     /**
      * Display a listing of the resource.
-     * 所有车源列表
+     * 所有信息列表
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -52,6 +52,45 @@ class InfoSelfController extends Controller
         // dd($infoSelfs[0]->belongsToCreater);
         
         return view('admin.infoSelf.index', compact('infoSelfs', 'select_conditions'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     * 所有信息列表
+     * @return \Illuminate\Http\Response
+     */
+    public function payed(Request $request)
+    {
+        
+        $select_conditions  = $request->all();
+        $request['payed']   = true;
+        // dd($select_conditions);
+        $infoSelfs = $this->infoSelf->getAllInfos($request);
+
+        // dd($infoSelfs[0]->belongsToCreater);
+        
+        return view('admin.infoSelf.index', compact('infoSelfs', 'select_conditions'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     * 所有信息列表
+     * @return \Illuminate\Http\Response
+     */
+    public function notPayed(Request $request)
+    {
+        
+        $select_conditions  = $request->all();
+        $request['payed']   = false;
+        $notPayed = true;
+        // dd($select_conditions);
+        $infoSelfs = $this->infoSelf->getAllInfos($request);
+
+        // dd(lastSql());
+        // dd($infoSelfs);
+        // dd($infoSelfs[0]->belongsToCreater);
+        
+        return view('admin.infoSelf.index', compact('infoSelfs', 'select_conditions', 'notPayed'));
     }
 
     /**
@@ -174,44 +213,25 @@ class InfoSelfController extends Controller
     }
 
     /**
-     * 修改车源状态
-     * 暂时只有激活-废弃转换
+     * 信息处理
+     * 基本信息--商品信息
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function changeStatus(Request $request)
-    {    
-        /*if($request->ajax()){
-            echo "zhen de shi AJAX";
-        }*/
-        /*p($request->input('id'));
-        p($request->input('status'));
-        p($request->method());exit;*/
+    public function dealWith(Request $request)
+    {
+           /**
+        * 获取所有未返还完成信息,与电信导入表数据对比并处理
+        * 处理结果反馈至返还记录
+        * 若返还完成,则将信息状态设置为完成状态
+        * 
+        */
 
-        $order = $this->order->find($request->id);
+        dd($request->all());
 
-        // $is_repeat = $this->order->isRepeat($order->vin_code);
+        $info = $this->infoSelf->create($request);
 
-        if($request->input('status') == '0'){
-            //激活车源
-            if($this->order->repeatorderNum($order->vin_code) > 0){
-
-                $msg = '已存在该车架号,无法激活';
-            }else{
-                $this->order->statusChange($request, $request->input('id'));
-                $msg = '车源已经激活';
-            }
-           
-        }else{
-            //废弃车源
-            $this->order->statusChange($request, $request->input('id'));
-            $msg = '车源已经废弃';
-
-        }
-        
-        return response()->json(array(
-            'status' => 1,
-            'msg' => $msg,
-        ));      
+        return redirect('infoSelf/index')->withInput();
     }
 
 }

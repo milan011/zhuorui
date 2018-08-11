@@ -96,10 +96,10 @@
                             @endif
                             @ifUserCan('dianxin.check')
                             <li>
-                                <a href="{{route('infoSelf.index')}}/index"><i class="icon-rocket"></i><span class="sidebar-text">已付款信息</span></a>
+                                <a href="{{route('infoSelf.payed')}}"><i class="icon-rocket"></i><span class="sidebar-text">已付款信息</span></a>
                             </li>
                             <li>
-                                <a href="{{route('infoSelf.index')}}/index"><i class="icon-rocket"></i><span class="sidebar-text">未付款信息</span></a>
+                                <a href="{{route('infoSelf.notPayed')}}"><i class="icon-rocket"></i><span class="sidebar-text">未付款信息</span></a>
                             </li>
                             <li>
                                 <a href="{{route('infoDianxin.index')}}/index"><i class="icon-rocket"></i><span class="sidebar-text">电信信息管理</span></a>

@@ -40,12 +40,19 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::match(['get', 'post'], 'manager/index', 'ManagerController@index')->name('manager.index');
 	//自输入管理index
 	Route::match(['get', 'post'], 'infoSelf/index', 'InfoSelfController@index')->name('infoSelf.index');
+	//未付款路由
+	Route::match(['get', 'post'], 'infoSelf/notPayed', 'InfoSelfController@notPayed')->name('infoSelf.notPayed');
+	//已经付款路由
+	Route::match(['get', 'post'], 'infoSelf/payed', 'InfoSelfController@payed')->name('infoSelf.payed');
+	// 信息处理路由
+	Route::get('infoSelf/dealWith', 'InfoSelfController@dealWith')->name('infoSelf.dealWith');
 	//套餐管理index
 	Route::match(['get', 'post'], 'package/index', 'PackageController@index')->name('package.index');
 	//电信导入信息管理index
 	Route::match(['get', 'post'], 'infoDianxin/index', 'InfoDianxinController@index')->name('infoDianxin.index');
 	Route::get( 'infoDianxin/error', 'InfoDianxinController@error')->name('infoDianxin.error');
 	Route::post('infoDianxin/checkRepeat', 'InfoDianxinController@checkRepeat')->name('infoDianxin.checkRepeat');
+	
 	
 	//ajax删除订单商品
 	/*Route::post('infoSelfGoods/ajaxDelete', 'infoSelfPackageController@ajaxDelete')->name('infoSelfGoods.ajaxDelete');

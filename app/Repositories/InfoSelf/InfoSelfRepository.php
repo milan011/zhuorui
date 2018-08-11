@@ -37,6 +37,18 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
         // dd($request->all());
         $query = $query->addCondition($request->all()); //根据条件组合语句
 
+        if(isset($request->payed)){
+            if($request->payed){
+                //已经付款
+                $query = $query->whereIn('status', ['2','3']);
+                $query = $query->where('status','!=', '0');
+            }else{
+                //未付款
+                $query = $query->where('status', '1');
+                $query = $query->where('status','!=', '0');
+            }
+        }
+        
         // $query = $query->chacneLaunch($request->Plan_launch);
 
         return $query->select($this->select_columns)
@@ -151,7 +163,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
     //判断电话号码是否重复
     public function isRepeat($new_telephone){
 
-        $info = InfoSelf::where('new_telephone', $new_telephone)->first();
+        $info = InfoSelf::where('new_telephone', $new_telephone)->where('status', '!=', '0')->first();
 
         return $info;
 

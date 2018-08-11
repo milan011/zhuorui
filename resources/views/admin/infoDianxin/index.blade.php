@@ -88,23 +88,22 @@
 							<td>{{$info->netin}}</td>		
 							<td>{{$info->belongsToCreater->nick_name}}|{{substr($info->created_at, 0 ,10)}}</td>		
 							<td class="center">
-								
-								<div class="btn-group">
-									<a class="btn btn-success" href="{{route('infoDianxin.edit', ['info'=>$info->id])}}">
-										<i class="icon-edit icon-white"></i> 编辑
-									</a>
-									<a class="btn btn-warning" href="{{route('infoDianxin.show', ['info'=>$info->id])}}">
-										查看
-									</a>
-									<form action="{{route('infoDianxin.destroy', ['info'=>$info->id])}}" method="post" style="display: inherit;margin:0px;">
-                                    	{{ csrf_field() }}
-                                    	{{ method_field('DELETE') }}
-                                    	<button class="btn btn-danger delete-confrim" type="button">
-                                        	<i class="icon-trash icon-white"></i> 删除
-                                    	</button>
-                                	</form>
-								</div>							
-							</td>
+                                <a class="btn btn-success" target="_blank" href="{{route('infoDianxin.show', ['info'=>$info->id])}}">
+                                    <i class="icon-edit icon-white"></i> 查看
+                                </a>
+                                <a class="btn btn-warning"  href="{{route('infoDianxin.edit', ['info'=>$info->id])}}">
+                                    <i class="icon-edit icon-white"></i> 编辑
+                                </a>
+                                <span>
+                                <form action="{{route('infoDianxin.destroy', ['info'=>$info->id])}}" method="post" style="display: inherit;margin:0px;">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
+                                    <button class="btn btn-danger delete-confrim" type="button">
+                                        <i class="icon-trash icon-white"></i> 删除
+                                    </button>
+                                </form>
+                                </span>
+                            </td>
 						</tr>
 						@endforeach							
 					</tbody>
@@ -213,7 +212,7 @@
 <script src="{{URL::asset('js/tcl/locales/bootstrap-datepicker.zh-CN.js')}}"></script> 
 <script src="{{URL::asset('yazan/assets/plugins/jquery-file-input/file-input.js')}}"></script> 
 <!-- 引入确认框js -->
-<!-- <script src="{{URL::asset('js/tcl/confirm.js')}}"></script>  -->
+<script src="{{URL::asset('yazan/js/confirm.js')}}"></script>
 <script>
 	$(document).ready(function(){
 		

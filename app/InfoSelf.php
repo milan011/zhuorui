@@ -84,9 +84,7 @@ class InfoSelf extends Model
         if(!empty($requestData['status'])){
             //有订单状态选项
             $query = $query->where('status', $requestData['status']);
-        }else{
-            $query = $query->whereIn('status', ['1', '2']);
-        }    
+        }  
 
         if(!empty($requestData['date'])){
             /*p(substr($requestData['date'], 0, 10));

@@ -37,7 +37,7 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
      
         // dd($query);
         // $query = $query->where('is_show', '1');
-        // $query = $query->orWhere('car_status', '6');
+        $query = $query->orWhere('status', '1');
         // $query = $query->where('car_status', $request->input('car_status', '1'));
 
         return $query->select($this->select_columns)
@@ -76,33 +76,14 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
     public function update($requestData, $id)
     {   
 
-        $repeated = $this->isRepeat($requestData->new_telephone);
-
         $info   = InfoDianxin::select($this->select_columns)->findorFail($id); //获取信息
-        $manager = Manager::findOrFail($requestData['manager']);//获得客户经理信息
-
-        // 处理副卡信息
-        // dd($requestData->all());
-        if (!empty($requestData['side_numbers'])){
-            $side_number = implode("|",  array_unique($requestData['side_numbers']));
-        }
-
-        // dd($side_number);
         
-        $info->name             = $requestData->name;
-        $info->user_telephone   = $requestData->telephone;
-        $info->manage_name      = $manager->name;
-        $info->manage_telephone = $manager->telephone;
-        $info->manage_id        = $requestData->manager;
-        $info->project_name     = $requestData->project_name;
-        // $info->new_telephone    = $requestData->new_telephone;
-        $info->uim_number       = $requestData->uim_number;
-        $info->collections      = $requestData->collections;
-        $info->side_number      = $side_number;
-        $info->collections_type = $requestData->collections_type;
-        $info->netin            = $requestData->netin_year.'-'.$requestData->netin_moth;
-        $info->old_bind         = isset($requestData->old_bind) ? '1' : '0';
-
+        $info->name            = $requestData->name;
+        $info->yongjin         = $requestData->yongjin;
+        $info->refunds         = $requestData->refunds;
+        $info->jiakuan         = $requestData->jiakuan;
+        $info->balance_month   = $requestData->balance_month;
+        $info->netin           = $requestData->netin_year.'-'.$requestData->netin_moth;
 
         Session::flash('sucess', '信息修改成功');
         $info->save();
@@ -117,10 +98,10 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
             $info = InfoDianxin::findorFail($id);
             $info->status = '0';
             $info->save();
-            Session::flash('sucess', '删除约车成功');
+            Session::flash('sucess', '删除信息成功');
            
         } catch (\Illuminate\Database\QueryException $e) {
-            Session()->flash('faill', '删除约车失败');
+            Session()->flash('faill', '删除信息失败');
         }      
     } 
 
@@ -128,6 +109,7 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
     public function isRepeat($return_telephone, $balance_month){
 
         $info = InfoDianxin::where('return_telephone', $return_telephone)
+                        ->where('status', '!=', '0')
                         ->where('balance_month', $balance_month)
                         ->first();
 

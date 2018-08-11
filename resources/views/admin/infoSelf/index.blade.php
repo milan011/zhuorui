@@ -38,7 +38,12 @@
             		  	<li style="display: inline-block;line-height:20px;float:right;">
 							<a class="btn btn-primary" href="{{route('infoSelf.create')}}">添加信息</a>
 						</li>
-						<li style="display:inline-block;line-height:20px;float:right;">
+						@if(isset($notPayed))
+						<li style="display: inline-block;line-height:20px;float:right;">
+							<a class="btn btn-primary" href="{{route('infoSelf.dealWith')}}">处理信息</a>
+						</li>
+						@endif
+						<li style="display:inline-block;line-height:20px;float:left;">
 							<a href="#" onclick="window.history.go(-1);return false;" class="btn ">返回</a>
 						</li>
             		</ul>
