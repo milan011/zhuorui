@@ -56,7 +56,7 @@
         <div class="pull-left">
             <ol class="breadcrumb">
                 <li><a href="{{route('admin.index')}}">首页</a></li>
-                <li><a href="{{route('infoSelf.index')}}">信息列表</a></li>
+                <li><a href="{{route('infoDianxin.index')}}">信息列表</a></li>
                 <li class="active">信息详情</li>
             </ol>
         </div>
@@ -70,34 +70,34 @@
 <div class="row-fluid">
 	<div class="box span12" style="padding:10px;">
 
-		<p class="title">[客户]:{{$info->name}}({{($info->user_telephone)}})</p>
+		<p class="title">[套餐]:{{$info->name or ''}}</p>
 
 		<div class="col-xs-12">
 			<p class="detial">
 				
 				<span>
-					<i>客户经理:</i>
-					{{$info->manage_name}}({{$info->manage_telephone}})
+					<i>返还号码:</i>
+					{{$info->return_telephone}}
 				</span>
 				<span>
-					<i>项目:</i>
-					{{$info->project_name}}
+					<i>价款:</i>
+					{{$info->jiakuan}}
 				</span>
 				<span>
-					<i>绑旧卡:</i>
-					@if($info->old_bind == 0) 是 @else 否 @endif
+					<i>返还金额:</i>
+					{{$info->refunds}}
 				</span>
 			</p>
 		</div>
 		<div class="col-xs-12">
 			<p class="detial">
 				<span>
-					<i>新号码:</i>
-					{{$info->new_telephone}}
+					<i>客户经理:</i>
+					{{$info->manager or ''}}
 				</span>
 				<span>
-					<i>UIM码:</i>
-					{{$info->uim_number}}
+					<i>返还月:</i>
+					{{$info->balance_month}}
 				</span>
 				<span>
 					<i>入网日期:</i>		
@@ -108,70 +108,29 @@
 		<div class="col-xs-12">
 			<p class="detial">
 				<span>
-					<i>收款:</i>
-					{{$info->collections}}
-				</span>
-				<span>
-					<i>收款方式:</i>		
-					{{$collections_type[$info->collections_type]}}			
-				</span>
-				<span>
-					<i>还款月数:</i>
-					{{$info->balance_month}}
-				</span>
-			</p>
-		</div>
-		<div class="col-xs-12">
-			<p class="detial">
-				
-				<span>
-					<i>返还状态:</i>
-					{{$info_status[$info->status]}}
+					<i>集团:</i>
+					{{$info->jituan}}
 				</span>
 				<span>
 					<i>创建者/日期:</i>
 					{{$info->belongsToCreater->nick_name}}/{{substr($info->created_at, 0 ,10)}}
 				</span>
 				<span>
-					<i>备注:</i>		
-					{{$info->remark}}			
+					<i>佣金方案:</i>
+					{{$info->yongjin}}
 				</span>
 			</p>
 		</div>
 		<div class="col-xs-12">
 			<p class="detial">
-				<span style="display:inline;">
-					<i>副卡:</i>
-					{{$info->side_number}}
+				<span>
+					<i>备注:</i>		
+					{{$info->remark}}			
 				</span>
-				
 			</p>
 		</div>
 	</div>	
 </div> 
-<div class="row-fluid">
-	<div class="box span12" style="padding:10px;">
 
-		<p class="title">[套餐信息]</p>
-		<div class="box-content">
-			<table  class="table table-striped table-bordered">
-				<thead>
-					<tr>
-						<th>套餐名称</th>
-						<th>返还月</th>
-						<th>返还金额</th>
-					</tr>
-				</thead> 
-				<tbody>
-    				<tr>
-    					<td>{{$package_info->name}}</td>
-    					<td>{{$package_info->month_nums}}</td>
-    					<td>{{$package_info->package_price}}</td>
-    				</tr>						
-				</tbody>
-			</table> 		
-		</div>		
-	</div>	
-</div>  
 </section>
 @endsection

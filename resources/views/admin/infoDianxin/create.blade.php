@@ -51,14 +51,19 @@
                             </div>
                         </div>
                         <!-- 客户经理 -->
-                        <!-- <div class="form-group">
+                        <div class="form-group">
                             <label class="control-label col-md-1">客户经理:</label>
-                            <div class="col-md-8">
-                                <select class="form-control" id="manager" name="manager" style="width:15%;display: inline-block;">
-                                    
-                                </select>
+                            <div class="col-md-4">
+                                <input type="text" name="manager" required placeholder="客户经理" class="form-control" value="{{old('manager')}}"/>
                             </div>
-                        </div> -->
+                        </div>
+                        <!-- 集团 -->
+                        <div class="form-group">
+                            <label class="control-label col-md-1">集团:</label>
+                            <div class="col-md-4">
+                                <input type="text" name="jituan" required placeholder="集团" class="form-control" value="{{old('jituan')}}"/>
+                            </div>
+                        </div>
                         <!-- 佣金方案 -->
                         <div class="form-group">
                             <label class="control-label col-md-1">佣金方案:</label>
@@ -118,6 +123,7 @@
                             <div class="col-md-4" style="text-align:center;">
                                 <button type="submit" class="btn btn-sm btn-success">添加</button>
                                 <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
+                                <input type="hidden" name="add_shoudong" value="1">
                             </div>
                         </div>
                     </form>
@@ -166,6 +172,20 @@
                     validators: {
                         notEmpty: {
                             message: '请输入返款金额'
+                        }
+                    }
+                },
+                jituan: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入价款'
+                        }
+                    }
+                },
+                manager: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入价款'
                         }
                     }
                 },

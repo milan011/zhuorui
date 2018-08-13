@@ -96,11 +96,11 @@ class InfoDianxinController extends Controller
         $package_info = array();
 
         $info         = $this->infoDianxin->find($id);
-        $package_info = $info->hasOnePackage;
+        // $package_info = $info->hasOnePackage;
 
-         // dd($package_info);
+         // dd($info);
 
-        return view('admin.infoDianxin.show', compact('info', 'package_info'));
+        return view('admin.infoDianxin.show', compact('info'));
     }
 
     /**
@@ -192,7 +192,7 @@ class InfoDianxinController extends Controller
     {
         // dd(session::get('file_name'));
         // dd(public_path('uploads/dianxinExcel'));
-        
+        // dd('xixi');
         $filePath = public_path('uploads/dianxinExcel/').session::get('file_name');
         $time_star = time();//得到当前时间戳，用来在最后计算文件导入完毕后的用时
         /*dd($filePath);
@@ -211,7 +211,7 @@ class InfoDianxinController extends Controller
             // $table = $reader->toArray();
             $table = $tables[0];
             
-            // dd($table->isEmpty()); //表是否为空
+            // dd($table); //表是否为空
 
             if($table->isEmpty()){
                 // p('hehe');exit;
@@ -221,7 +221,7 @@ class InfoDianxinController extends Controller
             $table = $table->unique(); //清除重复数据
 
             //表title信息
-            $table_key = array("套餐名称","返款号码","返款金额","价款","结算月","佣金方案","返还日期");
+            $table_key = array("套餐名称","返款号码","返款金额","价款","结算月","佣金方案","返还日期",'客户经理', '集团名称');
 
             foreach ($table_key as $key => $value) {
                 # 判断传入的表数据是否符合title
@@ -264,20 +264,25 @@ class InfoDianxinController extends Controller
                         $row["balance_month"]    = (string)trim($v['结算月']);//结算月
                         $row["netin"]            = (string)trim($v['返还日期']);//返还日期
                         $row["jiakuan"]          = trim($v['价款']);//价款
+                        $row["manager"]          = trim($v['客户经理']);//客户经理
+                        $row["jituan"]           = trim($v['集团名称']);//集团名称
 
                         array_push($data, $row);
                     }
-
+                    // dd($data);
                     //插入
                     foreach($data as $d){
                         if(!$d)continue;
-    
+                        // $d = collect($d);
+                        // dd($d);
                         $infoDianxin = $this->infoDianxin->create($d);
     
                         /*DB::transaction(function ()use($d) {//一些导入操作
                             $insert_id = DB::table("zr_info_dianx")->insertGetId($d);
                             //一些数据库操作
                         });*/
+                        /*p('hehe');
+                        dd(lastSql());*/
                         $success_count++;
                     }
                 }

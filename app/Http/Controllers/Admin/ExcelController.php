@@ -38,7 +38,7 @@ class ExcelController extends Controller
 
     //Excel文件导入功能 By Laravel学院
     public function import(){
-
+        // dd('heh');
         // dd(session::get('file_name'));
         // dd(public_path('uploads/dianxinExcel'));
         $filePath = public_path('uploads/dianxinExcel/').session::get('file_name');

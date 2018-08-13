@@ -40,11 +40,11 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
         if(isset($request->payed)){
             if($request->payed){
                 //已经付款
-                $query = $query->whereIn('status', ['2','3']);
+                $query = $query->where('status', '3');
                 $query = $query->where('status','!=', '0');
             }else{
                 //未付款
-                $query = $query->where('status', '1');
+                $query = $query->whereIn('status', ['1','2']);
                 $query = $query->where('status','!=', '0');
             }
         }

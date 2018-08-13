@@ -9,19 +9,15 @@
 
 <!-- 面包屑 -->
 @section('BreadcrumbTrail')
-<ul class="breadcrumb">
-	<li>
-		<i class="icon-home"></i>
-		<a href="{{route('admin.index')}}">主页</a>  
-		<i class="icon-angle-right"></i>
-	</li>
-	<li>
-		<i class="icon-home"></i>
-		<a href="{{route('infoSelf.index')}}">信息列表</a> 
-		<i class="icon-angle-right"></i>
-	</li>
-	<li><a href="#1f">修改信息</a></li>
-</ul>
+<section class="content-header">
+    <div class="pull-left">
+        <ol class="breadcrumb">
+            <li><a href="{{route('admin.index')}}">首页</a></li>
+            <li><a href="{{route('infoDianxin.index')}}">信息列表</a></li>
+            <li class="active">修改信息</li>
+        </ol>
+    </div>
+</section>
 @endsection
 <!-- 主体 -->
 @section('content')
@@ -52,14 +48,19 @@
                             </div>
                         </div>
                         <!-- 客户经理 -->
-                        <!-- <div class="form-group">
+                        <div class="form-group">
                             <label class="control-label col-md-1">客户经理:</label>
-                            <div class="col-md-8">
-                                <select class="form-control" id="manager" name="manager" style="width:15%;display: inline-block;">
-                                    
-                                </select>
+                            <div class="col-md-4">
+                                <input type="text" name="manager" required placeholder="客户经理" class="form-control" value="{{$info->manager}}"/>
                             </div>
-                        </div> -->
+                        </div>
+                        <!-- 集团 -->
+                        <div class="form-group">
+                            <label class="control-label col-md-1">集团:</label>
+                            <div class="col-md-4">
+                                <input type="text" name="jituan" required placeholder="集团" class="form-control" value="{{$info->jituan}}"/>
+                            </div>
+                        </div>
                         <!-- 佣金方案 -->
                         <div class="form-group">
                             <label class="control-label col-md-1">佣金方案:</label>
@@ -163,6 +164,20 @@
                     }
                 },
                 jiakuan: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入价款'
+                        }
+                    }
+                },
+                jituan: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入价款'
+                        }
+                    }
+                },
+                manager: {
                     validators: {
                         notEmpty: {
                             message: '请输入价款'

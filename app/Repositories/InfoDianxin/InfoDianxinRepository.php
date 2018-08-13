@@ -17,7 +17,7 @@ use Debugbar;
 class InfoDianxinRepository implements InfoDianxinRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['id','code', 'name', 'zm_type', 'jiakuan', 'refunds', 'balance_month', 'return_telephone','yongjin', 'netin', 'creater_id', 'status', 'remark','created_at'];
+    protected $select_columns = ['id','code', 'name', 'jiakuan', 'manager', 'jituan','refunds', 'balance_month', 'return_telephone','yongjin', 'netin', 'creater_id', 'status', 'remark','created_at'];
 
     // 根据ID获得车源信息
     public function find($id)
@@ -48,25 +48,33 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
     // 创建信息
     public function create($requestData)
     {   
-        $repeated = $this->isRepeat($requestData->return_telephone,$requestData->balance_month);
+        // dd($requestData->all());
+        if(!empty($requestData->add_shoudong)){
+            //手动添加电信信息
+            $repeated = $this->isRepeat($requestData->return_telephone,$requestData->balance_month);
 
-        // dd($repeated);
+            if(null !== $repeated){
+                Session::flash('sucess', '该号码已经存在');
+                return $repeated;
+            }
 
-        if(null !== $repeated){
-            Session::flash('sucess', '该号码已经存在');
-            return $repeated;
+            $requestData['netin']      = $requestData['netin_year'].'-'.$requestData['netin_moth'];
+
+            unset($requestData['_token']);
+            unset($requestData['netin_year']);
+            unset($requestData['netin_moth']);
         }
+        
+        // dd($requestData);
 
         $infoDianxin = new InfoDianxin();
-        // $input =  array_replace($requestData->all());
-        
-        $requestData['creater_id'] = Auth::id();
-        $requestData['netin']      = $requestData['netin_year'].'-'.$requestData['netin_moth'];
-        unset($requestData['_token']);
-        unset($requestData['netin_year']);
-        unset($requestData['netin_moth']);
 
-        $infoDianxin = $infoDianxin->insertIgnore($requestData->all());
+        // $input =  array_replace($requestData->all());
+
+        $requestData['creater_id'] = Auth::id();
+        
+
+        $infoDianxin = $infoDianxin->insertIgnore($requestData);
 
         // Session::flash('sucess', '添加成功');
         return $infoDianxin;     
@@ -82,6 +90,8 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
         $info->yongjin         = $requestData->yongjin;
         $info->refunds         = $requestData->refunds;
         $info->jiakuan         = $requestData->jiakuan;
+        $info->jituan          = $requestData->jituan;
+        $info->manager         = $requestData->manager;
         $info->balance_month   = $requestData->balance_month;
         $info->netin           = $requestData->netin_year.'-'.$requestData->netin_moth;
 
@@ -112,7 +122,8 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
                         ->where('status', '!=', '0')
                         ->where('balance_month', $balance_month)
                         ->first();
-
+        /*dd(lastSql());
+        dd($info);*/
         return $info;
 
     }
