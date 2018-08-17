@@ -43,12 +43,12 @@ class UserRepository implements UserRepositoryContract {
                    // ->select('yz_users.*')
                    ->get();*/
 
-        $users = DB::table('yz_users')
+        $users = DB::table('zr_users')
                     ->join('role_user', function ($join) use ($role_id){
-                        $join->on('yz_users.id', '=', 'role_user.user_id')
+                        $join->on('zr_users.id', '=', 'role_user.user_id')
                              ->where('role_user.role_id', '=', $role_id);
                         })
-                    ->select('yz_users.id', 'yz_users.name', 'yz_users.nick_name')
+                    ->select('zr_users.id', 'zr_users.name', 'zr_users.nick_name')
                     ->get();
 
         return $users;

@@ -93,7 +93,7 @@ class Handler extends ExceptionHandler
         
         if(strstr($e->getFile(), 'phpexcel')){
             // p($e->getFile());
-            dd($e);
+            // dd($e);
             return redirect()->route('infoDianxin.error');
             
         }

@@ -28,7 +28,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
                    ->findOrFail($id);
     }
 
-    // 根据不同参数获得约车列表
+    // 根据不同参数获得信息列表
     public function getAllInfos($request)
     {   
         // dd($request->Plan_launch);
@@ -54,6 +54,19 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
         return $query->select($this->select_columns)
                      ->orderBy('created_at', 'DESC')
                      ->paginate(10);
+    }
+
+    // 获取业务员录入信息
+    public function getSalesmanInfo($creater_id, $netin)
+    {   
+        // dd($request->Plan_launch);
+        // $query = Plan::query();  // 返回的是一个 QueryBuilder 实例
+        $query = new InfoSelf();       // 返回的是一个Plan实例,两种方法均可
+
+        return $query->select($this->select_columns)
+                     ->where('creater_id', $creater_id)
+                     ->where('netin', $netin)
+                     ->get();
     }
 
     // 创建信息

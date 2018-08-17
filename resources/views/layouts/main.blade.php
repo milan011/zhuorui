@@ -34,35 +34,6 @@
                 <nav role="navigation" class="navbar navbar-static-top">
                     <div class="navbar-right">
                         <ul class="nav navbar-nav">
-                            <!-- <li class="dropdown dropdown-extra dropdown-messages"><a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-envelope-open"></i><span class="badge badge-primary">4</span></a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <p>您有好几个订单</p>
-                                    </li>
-                                    <li>
-                                        <ul class="dropdown-menu-list dropdown-scroller">
-                                            <li><a href="#"><span class="avatar"><img src="http://api.randomuser.me/portraits/thumb/men/68.jpg" alt="" class="img-circle"/></span><span class="subject"><span class="from">Teodor Macri</span><span class="time">12 mins</span></span><span class="message">Neque porro quisquam est, qui dolorem ipsum quia dolor sit...</span></a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="footer"><a href="inbox.html">See all messages<i class="icon-arrow-right"></i></a></li>
-                                </ul>
-                            </li> -->
-                            <!-- <li class="dropdown dropdown-extra dropdown-notifications"><a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-bell"></i><span class="badge pink">6</span></a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <p>You have 14 new notifications</p>
-                                    </li>
-                                    <li>
-                                        <ul class="dropdown-menu-list dropdown-scroller">
-                                            <li><a href="#">订单啊
-                                                    &nbsp;<span class="time">10 mins</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="footer"><a href="#">See all notifications<i class="icon-arrow-right"></i></a></li>
-                                </ul>
-                            </li> -->
                             <li class="dropdown dropdown-user menu-user">
                                 <a href="#" data-toggle="dropdown" class="dropdown-toggle">
                                     <span class="hidden-xs">用户 {{ Auth::user()->nick_name }}</span>&nbsp;
@@ -92,6 +63,11 @@
                             @ifUserCan('info.check')
                             <li>
                                 <a href="{{route('infoSelf.index')}}/index"><i class="icon-rocket"></i><span class="sidebar-text">信息管理</span></a>
+                            </li>
+                            @endif
+                            @ifUserCan('dianxin.check')
+                            <li>
+                                <a href="{{route('infoSelf.statistics')}}"><i class="icon-rocket"></i><span class="sidebar-text">信息统计</span></a>
                             </li>
                             @endif
                             @ifUserCan('dianxin.check')

@@ -110,6 +110,13 @@
 				</table>		
 			</div>
             <div class="col-md-6 col-sm-12">
+            	<div class="dataTables_paginate paging_simple_numbers" style="float:left;">
+                        <div class="pagination pagination-centered">
+                          <ul class="pagination">
+                            <li class="disabled"><span>共{{ $infos->total() }}条</span></li>
+                          </ul>
+                        </div>
+                    </div>
                 <div class="dataTables_paginate paging_simple_numbers" id="datatables_paginate">
                 	<div class="pagination pagination-centered">
                 	    {!! $infos->links() !!}

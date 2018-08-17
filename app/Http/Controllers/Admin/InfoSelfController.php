@@ -234,4 +234,62 @@ class InfoSelfController extends Controller
         return redirect('infoSelf/index')->withInput();
     }
 
+    /**
+     * 信息统计
+     * 基本信息--商品信息
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function statistics(Request $request)
+    {
+        $select_conditions  = $request->all();
+        // dd($select_conditions);
+        $infoSelfs           = $this->infoSelf->getAllInfos($request);
+        $salesmans           = $this->user->getAllUsersByRole('1');  //获取所有业务员
+        $salesman_statistics = array();
+        $netin               = '2018-04';
+        // dd($salesmans);
+
+        foreach ($salesmans as $key => $value) {
+            # 每个业务员统计
+            $salesman_list[] = $value->id;
+        }
+
+        // dd($salesman_list);
+        $salesman_list = [
+            ['id' => '1', 'nick_name'=>'wcg'],
+            ['id' => '2', 'nick_name'=>'mm'],
+        ];
+
+        foreach ($salesman_list as $key => $value) {
+            # 每个业务员统计
+            $salesman_info  = $this->infoSelf->getSalesmanInfo($value['id'], $netin);
+            $side_number    = 0;
+            // dd(lastSql());
+            // dd($value);
+            foreach ($salesman_info as $key => $v) {
+                # 统计业务员副卡数目
+                
+                if(!empty($v->side_number)){
+
+                    $side_array = explode("|", $v->side_number);
+                    // p(count($side_array));
+
+                    $side_number += count($side_array);
+                }
+            }
+            /*p($side_number);
+            dd($salesman_info->count());*/
+
+            $salesman_statistics[$key]['nick_name'] = $value['nick_name'];
+            $salesman_statistics[$key]['info_nums'] = $salesman_info->count();
+            $salesman_statistics[$key]['side_nums'] = $side_number;
+            $salesman_statistics[$key]['netin']     = $netin;
+        }
+
+        dd($salesman_statistics);
+        
+        return view('admin.infoSelf.statistics', compact('salesman_statistics', 'select_conditions'));
+    }
+
 }
