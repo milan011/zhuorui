@@ -46,7 +46,7 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::match(['get', 'post'], 'infoSelf/payed', 'InfoSelfController@payed')->name('infoSelf.payed');
 	// 信息处理路由
 	Route::get('infoSelf/dealWith', 'InfoSelfController@dealWith')->name('infoSelf.dealWith');
-	Route::get('infoSelf/statistics', 'InfoSelfController@statistics')->name('infoSelf.statistics');
+	Route::match(['get', 'post'], 'infoSelf/statistics', 'InfoSelfController@statistics')->name('infoSelf.statistics');
 	//套餐管理index
 	Route::match(['get', 'post'], 'package/index', 'PackageController@index')->name('package.index');
 	//电信导入信息管理index

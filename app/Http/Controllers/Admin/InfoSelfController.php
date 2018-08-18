@@ -12,6 +12,7 @@ use Carbon;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\InfoSelf\InfoSelfRepositoryContract;
+use App\Repositories\InfoDianxin\InfoDianxinRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
 use App\Repositories\Manager\ManagerRepositoryContract;
 use App\Repositories\Package\PackageRepositoryContract;
@@ -25,12 +26,14 @@ class InfoSelfController extends Controller
     public function __construct(
 
         InfoSelfRepositoryContract $infoSelf,
+        InfoDianxinRepositoryContract $infoDianxin,
         ManagerRepositoryContract $manager,
         PackageRepositoryContract $package,
         UserRepositoryContract $user
     ) {
     
         $this->infoSelf    = $infoSelf;
+        $this->infoDianxin = $infoDianxin;
         $this->manager     = $manager;
         $this->package     = $package;
         $this->user        = $user;
@@ -220,16 +223,31 @@ class InfoSelfController extends Controller
      */
     public function dealWith(Request $request)
     {
-           /**
+        /**
         * 获取所有未返还完成信息,与电信导入表数据对比并处理
         * 处理结果反馈至返还记录
         * 若返还完成,则将信息状态设置为完成状态
         * 
         */
+       
+        // 获取全部尚未返还完成信息
+        $request['payed']        = false;
+        $request['withNoPage']   = true; //获取全部数据
+        $notPayed = true;
+        // dd($select_conditions);
+        $infoSelfs_not_payed = $this->infoSelf->getAllInfos($request); //尚未返还完成信息
 
-        dd($request->all());
+        // dd($infoSelfs_not_payed);
 
-        $info = $this->infoSelf->create($request);
+        //获取全部尚未匹对的电信信息
+        
+        $request['dealed']       = false;
+        $request['withNoPage']   = true; //获取全部数据
+
+        $infoDianxins_not_dealed = $this->infoDianxin->getAllDianXinInfos($request); //尚未返还完成信息
+
+        // dd(lastSql());
+        dd($infoDianxins_not_dealed);
 
         return redirect('infoSelf/index')->withInput();
     }
@@ -242,14 +260,34 @@ class InfoSelfController extends Controller
      */
     public function statistics(Request $request)
     {
-        $select_conditions  = $request->all();
-        // dd($select_conditions);
+        
+        // dd($request->isMethod('post'));
         $infoSelfs           = $this->infoSelf->getAllInfos($request);
         $salesmans           = $this->user->getAllUsersByRole('1');  //获取所有业务员
         $salesman_statistics = array();
-        $netin               = '2018-04';
-        // dd($salesmans);
+        
 
+        if($request->isMethod('post')){
+
+            $netin_year  = $request->netin_year; //入网年
+            $netin_month = $request->netin_month; //入网月
+            $netin  = $request->netin_year . '-' . $request->netin_month;
+        }else{
+
+            $dt = Carbon::now(); //当前日期
+
+            $netin_year  = $dt->year;  //当前年
+            $netin_month = $dt->month; //当前月
+
+            $netin  = $netin_year . '-' . $netin_month;
+
+            // dd($netin_year);
+        }
+        
+        
+        
+
+        // dd($netin);
         foreach ($salesmans as $key => $value) {
             # 每个业务员统计
             $salesman_list[] = $value->id;
@@ -267,7 +305,7 @@ class InfoSelfController extends Controller
             $side_number    = 0;
             // dd(lastSql());
             // dd($value);
-            foreach ($salesman_info as $key => $v) {
+            foreach ($salesman_info as $k => $v) {
                 # 统计业务员副卡数目
                 
                 if(!empty($v->side_number)){
@@ -287,9 +325,9 @@ class InfoSelfController extends Controller
             $salesman_statistics[$key]['netin']     = $netin;
         }
 
-        dd($salesman_statistics);
+        // dd($salesman_statistics);
         
-        return view('admin.infoSelf.statistics', compact('salesman_statistics', 'select_conditions'));
+        return view('admin.infoSelf.statistics', compact('salesman_statistics', 'netin', 'netin_year', 'netin_month'));
     }
 
 }

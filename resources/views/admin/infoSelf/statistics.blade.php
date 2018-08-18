@@ -17,7 +17,7 @@
         <div class="pull-left">
             <ol class="breadcrumb">
                 <li><a href="{{route('admin.index')}}">首页</a></li>
-                <li class="active">信息列表</li>
+                <li class="active">信息统计</li>
             </ol>
         </div>
     </section>
@@ -31,88 +31,32 @@
         <div class="col-md-12">
             <div class="panel">
                 <div class="panel-body">
-            		<ul class="nav nav-tabs">
-            		  	<li style="display: inline-block;line-height:20px;">
-                            <a href="#modal-select" data-toggle="modal" class="btn btn-primary btn-sm">搜索信息</a>
-						</li>
-            		  	<li style="display: inline-block;line-height:20px;float:right;">
-							<a class="btn btn-primary" href="{{route('infoSelf.create')}}">添加信息</a>
-						</li>
-						@if(isset($notPayed))
-						<li style="display: inline-block;line-height:20px;float:right;">
-							<a class="btn btn-primary" href="{{route('infoSelf.dealWith')}}">处理信息</a>
-						</li>
-						@endif
-						<li style="display:inline-block;line-height:20px;float:left;">
-							<a href="#" onclick="window.history.go(-1);return false;" class="btn ">返回</a>
-						</li>
-            		</ul>
+                    <ul class="nav nav-tabs">
+                        <li style="display: inline-block;line-height:20px;">
+                            <a href="#modal-select" data-toggle="modal" class="btn btn-primary btn-sm">统计</a>
+                        </li>
+                    </ul>
                     <table id="datatables" class="table table-striped table-border">
                         <thead class="bg-default">
                             <tr>
-                                <th>编号</th>
-                                <th>项目</th>
-                                <th>新卡</th>
-                                <th>套餐</th>
-                                <th>客户</th>
-                                <th>电话</th>
-                                <th>入网</th>
-                                <th>返还状态</th>
-                                <th>创建</th>
-                                <th>操作</th>
+                                <th>业务员</th>
+                                <th>主卡数</th>
+                                <th>副卡数</th>
+                                <th>入网日期</th>
                             </tr>
                         </thead>
                         <tbody>
-                        @foreach ($infoSelfs as $info)
+                        @foreach ($salesman_statistics as $statistic)
                         <tr>
-                        	<td>
-                        		<a target="_blank" href="{{route('infoSelf.show', ['info'=>$info->id])}}">
-                        			{{$info->code or ''}}
-                        		</a>
-                        	</td> 
-                        	<td>{{$info->project_name or ''}}</td> 
-                        	<td>{{$info->new_telephone or ''}}</td> 
-                        	<td>{{$info->hasOnePackage->name or ''}}</td> 
-                            <td>{{$info->name}}</td>
-                            <td>{{$info->user_telephone or ''}}</td>                           
-                            <td>{{$info->netin or ''}}</td>                           
-                            <td>{{$info_status[$info->status]}}</td>                           
-                            <td>{{$info->belongsToCreater->nick_name}}|{{substr($info->created_at, 0 ,10)}}</td>                                
-                            <td class="center">
-                                <a class="btn btn-success" target="_blank" href="{{route('infoSelf.show', ['info'=>$info->id])}}">
-                                    <i class="icon-edit icon-white"></i> 查看
-                                </a>
-                                <a class="btn btn-warning"  href="{{route('infoSelf.edit', ['info'=>$info->id])}}">
-                                    <i class="icon-edit icon-white"></i> 编辑
-                                </a>
-                                <span>
-                                <form action="{{route('infoSelf.destroy', ['info'=>$info->id])}}" method="post" style="display: inherit;margin:0px;">
-                                    {{ csrf_field() }}
-                                    {{ method_field('DELETE') }}
-                                    <button class="btn btn-danger delete-confrim" type="button">
-                                        <i class="icon-trash icon-white"></i> 删除
-                                    </button>
-                                </form>
-                                </span>
-                            </td>
+                        	<td>{{$statistic['nick_name'] or ''}}</td> 
+                        	<td>{{$statistic['info_nums'] or ''}}</td> 
+                        	<td>{{$statistic['side_nums'] or ''}}</td> 
+                            <td>{{$netin}}</td>
+                            
                         </tr>
                         @endforeach 
                         </tbody>
                     </table>
-                </div>
-                <div class="col-md-6 col-sm-12">
-                	<div class="dataTables_paginate paging_simple_numbers" style="float:left;">
-                        <div class="pagination pagination-centered">
-                          <ul class="pagination">
-                            <li class="disabled"><span>共{{ $infoSelfs->total() }}条</span></li>
-                          </ul>
-                        </div>
-                    </div>
-                	<div class="dataTables_paginate paging_simple_numbers" id="datatables_paginate">
-                	    <div class="pagination pagination-centered">
-                	       {!! $infoSelfs->links() !!}
-                        </div>
-                	</div>
                 </div>
             </div>
         </div>
@@ -125,17 +69,28 @@
                     <h4 id="myModalLabel" class="modal-title">信息搜索</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" id="condition" action="{{route('infoSelf.index')}}/index" method="post">
+                    <form class="form-horizontal" id="condition" action="{{route('infoSelf.statistics')}}" method="post">
                     {!! csrf_field() !!}
                         <fieldset>
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="text" value="{{$select_conditions['user_telephone'] or ''}}"  name="user_telephone" placeholder="客户电话" class="col-md-12 form-control mbm" />
-                                <input type="text" name="date" value="{{$select_conditions['date'] or ''}}" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
-                                <label class="control-label" for="category_type">信息状态:</label>
-                                <select name="status" class="col-md-4 form-control mbm">
-                                    <option value=''>不限</option>                                        
-                                </select>
+                                <div class="form-group">
+                                <label class="control-label col-md-2">入网: </label>
+                                <div class="col-md-4">
+                                    <select class="form-control" name="netin_year" style="display: inline-block;">
+                                        @foreach($package_year as $key=>$year)
+                                        <option @if(($netin_year) == ($year)) selected='selected' @endif value="{{$year}}" >{{$year}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control" name="netin_month" style="display: inline-block;">
+                                        @foreach($package_month as $key=>$mo)
+                                        <option @if(($netin_month) == ($key)) selected='selected' @endif value="{{$mo}}" >{{$mo}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                        </div>
                             </div>
                         </div>
                         <div class="modal-footer">

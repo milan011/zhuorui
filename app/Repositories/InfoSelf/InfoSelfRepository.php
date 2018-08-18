@@ -46,15 +46,27 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
                 //未付款
                 $query = $query->whereIn('status', ['1','2']);
                 $query = $query->where('status','!=', '0');
+                $query = $query->where('old_bind', '0');
             }
         }
         
         // $query = $query->chacneLaunch($request->Plan_launch);
+        // 
+        if($request->withNoPage){ //无分页,全部返还
 
-        return $query->select($this->select_columns)
+            return $query->select($this->select_columns)
+                     ->orderBy('created_at', 'DESC')
+                     ->get();
+        }else{
+
+            return $query->select($this->select_columns)
                      ->orderBy('created_at', 'DESC')
                      ->paginate(10);
+        }
+
+        
     }
+
 
     // 获取业务员录入信息
     public function getSalesmanInfo($creater_id, $netin)

@@ -26,7 +26,7 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
                    ->findOrFail($id);
     }
 
-    // 根据不同参数获得商品列表
+    // 根据不同参数获得信息列表
     public function getAllDianXinInfos($request)
     {   
         // dd($request->all());
@@ -35,14 +35,26 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
 
         $query = $query->addCondition($request->all()); //根据条件组合语句
      
-        // dd($query);
-        // $query = $query->where('is_show', '1');
-        $query = $query->orWhere('status', '1');
+        if(isset($request->dealed)){
+            if(!$request->dealed){
+
+                $query = $query->where('status', '1');
+            }
+        }
+        
         // $query = $query->where('car_status', $request->input('car_status', '1'));
 
-        return $query->select($this->select_columns)
+        if($request->withNoPage){ //无分页,全部返还
+
+            return $query->select($this->select_columns)
+                     ->orderBy('created_at', 'desc')
+                     ->get();
+        }else{
+
+            return $query->select($this->select_columns)
                      ->orderBy('created_at', 'desc')
                      ->paginate(10);
+        }
     }
 
     // 创建信息

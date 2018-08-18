@@ -32,15 +32,17 @@
             <div class="panel">
                 <div class="panel-body">
             		<ul class="nav nav-tabs">
-            		  	<li style="display: inline-block;line-height:20px;">
+            		  	
+						@if(isset($notPayed))
+						<li style="display: inline-block;line-height:20px;">
+							<a class="btn btn-primary" href="{{route('infoSelf.dealWith')}}">处理信息</a>
+						</li>
+						@else
+						<li style="display: inline-block;line-height:20px;">
                             <a href="#modal-select" data-toggle="modal" class="btn btn-primary btn-sm">搜索信息</a>
 						</li>
             		  	<li style="display: inline-block;line-height:20px;float:right;">
 							<a class="btn btn-primary" href="{{route('infoSelf.create')}}">添加信息</a>
-						</li>
-						@if(isset($notPayed))
-						<li style="display: inline-block;line-height:20px;float:right;">
-							<a class="btn btn-primary" href="{{route('infoSelf.dealWith')}}">处理信息</a>
 						</li>
 						@endif
 						<li style="display:inline-block;line-height:20px;float:left;">
@@ -76,7 +78,7 @@
                             <td>{{$info->name}}</td>
                             <td>{{$info->user_telephone or ''}}</td>                           
                             <td>{{$info->netin or ''}}</td>                           
-                            <td>{{$info_status[$info->status]}}</td>                           
+                            <td><span style="color:@if($info->status == '1') #d50d24 @elseif($info->status == '2') #ffba00 @else #68b828 @endif;">{{$info_status[$info->status]}}</span></td>                           
                             <td>{{$info->belongsToCreater->nick_name}}|{{substr($info->created_at, 0 ,10)}}</td>                                
                             <td class="center">
                                 <a class="btn btn-success" target="_blank" href="{{route('infoSelf.show', ['info'=>$info->id])}}">
