@@ -2,6 +2,7 @@
 namespace App\Repositories\InfoSelf;
 
 use App\InfoSelf;
+use App\InfoDianxin;
 use App\Manager;
 
 use Session;
@@ -193,6 +194,132 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
         return $info;
 
     }
+
+    //处理信息
+    public function infoDeal($requestData){
+
+        $infoSelfs_not_payed = $this->getAllInfos($requestData); //尚未返还完成信息
+        $info_chunk          = $infoSelfs_not_payed->chunk(10);
+        $info_deal_nums      = 0;
+
+        // dd($info_chunk);
+
+        foreach ($info_chunk as $key => $value) {
+            # 匹对所有未返还完成信息,若电信信息有返还,则设置电信信息infi_self_id及status
+            foreach ($value as $k => $v) {
+                $info_dianx = $this->infoDealed($v->new_telephone);
+
+                if($info_dianx->count() == 0){
+                    //没有返款信息
+                    // dd($v);
+                    if(!empty($v->side_number)){ //副卡是否返款
+                        $side_list = explode("|", $v->side_number);
+                        /*dd($v);
+                        dd($side_list);*/
+                        foreach ($side_list as $s_key => $s_value) {
+                            $fuka_info = $this->infoDealed($s_value);
+
+                            if($fuka_info->count() != 0){
+                                //有返还信息
+                                /*p($v->id);
+                                dd($fuka_info);*/
+                                foreach ($fuka_info as $f_key => $f_value) {
+                                    
+                                    /*$f_value->status = '2';
+                                    $f_value->info_self_id = $v->id;*/
+                                    $f_value = $this->dealSelfAndDianxin($f_value, $v);
+                                    // $f_value->save();
+                                    // dd($f_value);
+                                    $info_deal_nums++;
+                                }
+                            }
+                        }
+                    }
+                }else{
+                    // 有返还信息
+                    foreach ($info_dianx as $info_key => $info_value) {
+                        # code...
+                        /*p($v->id);
+                        dd($info_value);*/
+                        /*$info_value->status = '2';
+                        $info_value->info_self_id = $v->id;*/
+                        $info_value = $this->dealSelfAndDianxin($info_value, $v);
+
+                        // $info_value->save();
+                        $info_deal_nums++;
+                    }
+                }
+            }
+        }
+        dd($info_deal_nums);
+        Session::flash('sucess', '信息处理成功');
+
+
+        return true;
+    }
+
+    //信息是否被匹对
+    public function infoDealed($return_telephone){
+
+        // dd($info->side_number);
+
+        $infoDealed = InfoDianxin::select(['id', 'info_self_id', 'status'])
+                                   ->where('return_telephone', $return_telephone)
+                                   ->where('status', '1')
+                                   ->get();
+
+        /*if(!empty($info->side_number)){ //副卡是否返款
+            $side_list = explode("|", $info->side_number);
+            foreach ($side_list as $key => $value) {
+                $infoDealed = InfoDianxin::select(['id', 'info_self_id', 'status'])
+                                   ->where('return_telephone', $value)
+                                   ->where('status', '1')
+                                   ->get();
+            }
+        }*/
+        // dd(lastSql());
+        /*dd($infoDealed->count());
+        dd(empty($infoDealed->count()));*/
+        return $infoDealed;
+    }
+
+    // 处理匹对成功信息
+    public function dealSelfAndDianxin($infoDianxin, $infoSelf)
+    {   
+        dd($infoSelf);
+        DB::transaction(function() use ($requestData){
+            // 添加车源并返回实例,处理跟进(添加车源)
+            $requestData['creater_id']    = Auth::id();
+            $requestData['status']        = '1';
+            $requestData['name']          = $requestData['package_name'];
+
+            // dd($requestData->all());
+            
+            $package = new Package();
+            $input =  array_replace($requestData->all());
+            $package->fill($input);
+            $package = $package->create($input);
+
+            // dd($requestData->month_price);
+           
+            foreach ($requestData->month_price as $key => $price) {
+
+                $package_info = new PackageInfo(); //套餐信息对象
+
+                $package_info->pid       = $package->id;
+                $package_info->nums      = $package->month_nums;
+                $package_info->creater_id  = Auth::id();
+                $package_info->return_month = ($key+1);
+                $package_info->return_price  = $price;
+                $package_info->save();
+
+                // dd($package_info);
+            }
+            
+            return $package;
+        });
+    }
+
 
     //约车状态转换，暂时只有激活-废弃转换
     public function statusChange($requestData, $id){

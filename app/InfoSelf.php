@@ -127,4 +127,10 @@ class InfoSelf extends Model
     {
         return $this->hasOne('App\Package', 'id', 'package_id');
     }
+
+    // 定义信息表与套餐表一对一关系
+    public function hasManyInfoDianxin()
+    {
+        return $this->hasMany('App\InfoDianxin', 'info_self_id', 'id' );
+    }
 }

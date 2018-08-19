@@ -26,7 +26,7 @@ class InfoDianxin extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['id','code', 'name', 'jiakuan', 'refunds', 'manager', 'jituan', 'balance_month', 'return_telephone','yongjin', 'netin', 'creater_id', 'status', 'remark'];
+    protected $fillable = ['id','code', 'name', 'jiakuan', 'refunds', 'info_self_id', 'manager', 'jituan', 'balance_month', 'return_telephone','yongjin', 'netin', 'creater_id', 'status', 'remark'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -90,10 +90,10 @@ class InfoDianxin extends Model
       return $this->belongsTo('App\User', 'creater_id', 'id')->select('id as user_id', 'nick_name', 'telephone as creater_telephone');
     }
 
-    // 定义Category表与order_goods表一对多关系
-    public function belongsToCategory(){
+    // 定义infoDianxin表与infoSelf表一对多关系
+    public function belongsToInfoSelf(){
 
-      return $this->belongsTo('App\Category', 'category_id', 'id');
+      return $this->belongsTo('App\InfoSelf', 'info_self_id', 'id');
     }
 
     // 定义goods表与order_goods表远程一对多关系

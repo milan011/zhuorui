@@ -41,7 +41,7 @@ class PackageRepository implements PackageRepositoryContract
                        ->get();
     }
 
-    // 创建车型
+    // 创建套餐
     public function create($requestData)
     {   
 
@@ -76,7 +76,6 @@ class PackageRepository implements PackageRepositoryContract
             
             return $package;
         });
-
     }
 
     // 修改车型

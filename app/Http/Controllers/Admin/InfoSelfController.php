@@ -235,9 +235,9 @@ class InfoSelfController extends Controller
         $request['withNoPage']   = true; //获取全部数据
         $notPayed = true;
         // dd($select_conditions);
-        $infoSelfs_not_payed = $this->infoSelf->getAllInfos($request); //尚未返还完成信息
+        $infoSelfs_not_payed = $this->infoSelf->infoDeal($request); //尚未返还完成信息
 
-        // dd($infoSelfs_not_payed);
+        dd($infoSelfs_not_payed);
 
         //获取全部尚未匹对的电信信息
         
@@ -248,6 +248,7 @@ class InfoSelfController extends Controller
 
         // dd(lastSql());
         dd($infoDianxins_not_dealed);
+
 
         return redirect('infoSelf/index')->withInput();
     }
