@@ -52,7 +52,7 @@ class InfoSelfController extends Controller
         // dd($select_conditions);
         $infoSelfs = $this->infoSelf->getAllInfos($request);
 
-        // dd($infoSelfs[0]->belongsToCreater);
+        // dd($infoSelfs[1]->hasManyInfoDianxin()->count());
         
         return view('admin.infoSelf.index', compact('infoSelfs', 'select_conditions'));
     }
@@ -229,7 +229,6 @@ class InfoSelfController extends Controller
         * 若返还完成,则将信息状态设置为完成状态
         * 
         */
-       
         // 获取全部尚未返还完成信息
         $request['payed']        = false;
         $request['withNoPage']   = true; //获取全部数据
@@ -237,7 +236,7 @@ class InfoSelfController extends Controller
         // dd($select_conditions);
         $infoSelfs_not_payed = $this->infoSelf->infoDeal($request); //尚未返还完成信息
 
-        dd($infoSelfs_not_payed);
+        // dd($infoSelfs_not_payed);
 
         //获取全部尚未匹对的电信信息
         
@@ -247,10 +246,10 @@ class InfoSelfController extends Controller
         $infoDianxins_not_dealed = $this->infoDianxin->getAllDianXinInfos($request); //尚未返还完成信息
 
         // dd(lastSql());
-        dd($infoDianxins_not_dealed);
+        // dd($infoDianxins_not_dealed);
 
 
-        return redirect('infoSelf/index')->withInput();
+        return redirect('infoSelf/notPayed')->withInput();
     }
 
     /**

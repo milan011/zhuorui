@@ -73,7 +73,8 @@
 						<tr>
 							<th>返还号码</th>
 							<th>返还金额</th>
-							<th>返还月</th>						
+							<th>返还月</th>	
+							<th>状态</th>					
 							<th>返还日期</th>						
 							<th>导入时间</th>
 							<th>操作</th>
@@ -84,7 +85,8 @@
     					<tr>
 							<td>{{$info->return_telephone}}</td>							
 							<td>{{$info->refunds}}</td>		
-							<td>{{$info->balance_month}}</td>		
+							<td>{{$info->balance_month}}</td>
+							<td><span style="color:@if($info->status == '1') #d50d24 @else($info->status == '2') #68b828 @endif;">{{$info_dianxin_status[$info->status]}}</span></td>		
 							<td>{{$info->netin}}</td>		
 							<td>{{$info->belongsToCreater->nick_name}}|{{substr($info->created_at, 0 ,10)}}</td>		
 							<td class="center">
@@ -109,7 +111,7 @@
 					</tbody>
 				</table>		
 			</div>
-            <div class="col-md-6 col-sm-12">
+            <div class="col-md-9 col-sm-12">
             	<div class="dataTables_paginate paging_simple_numbers" style="float:left;">
                         <div class="pagination pagination-centered">
                           <ul class="pagination">

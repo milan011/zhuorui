@@ -4,6 +4,7 @@ namespace App\Repositories\InfoSelf;
 use App\InfoSelf;
 use App\InfoDianxin;
 use App\Manager;
+use App\Package;
 
 use Session;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ use Debugbar;
 class InfoSelfRepository implements InfoSelfRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['code', 'id', 'name', 'user_telephone', 'old_bind', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'package_id', 'status','remark','created_at'];
+    protected $select_columns = ['code', 'id', 'name', 'user_telephone', 'old_bind', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'package_month', 'package_id', 'status','remark','created_at'];
 
 
     // 根据ID获得约车信息
@@ -101,6 +102,9 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
 
             //获得客户经理信息
             $manager = Manager::findOrFail($requestData['manager']);
+            // dd($manager);
+            // dd($requestData->all());
+            $package = Package::findOrFail($requestData['package_id']);
             
             // dd($manager);
             // 处理副卡信息
@@ -117,6 +121,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
             $requestData['manage_name']      = $manager->name;
             $requestData['manage_id']        = $manager->id;
             $requestData['manage_telephone'] = $manager->telephone;
+            $requestData['package_month']    = $package->month_nums;
             $requestData['user_telephone']   = $requestData['telephone'];
             $requestData['side_number']      = $side_number;
             $requestData['netin']            = $requestData['netin_year'].'-'.$requestData['netin_moth'];
@@ -251,8 +256,8 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
                 }
             }
         }
-        dd($info_deal_nums);
-        Session::flash('sucess', '信息处理成功');
+        // dd($info_deal_nums);
+        Session::flash('sucess', '信息处理成功,共处理'.$info_deal_nums.'条信息');
 
 
         return true;
@@ -286,37 +291,21 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
     // 处理匹对成功信息
     public function dealSelfAndDianxin($infoDianxin, $infoSelf)
     {   
-        dd($infoSelf);
-        DB::transaction(function() use ($requestData){
-            // 添加车源并返回实例,处理跟进(添加车源)
-            $requestData['creater_id']    = Auth::id();
-            $requestData['status']        = '1';
-            $requestData['name']          = $requestData['package_name'];
+        // dd($infoDianxin);
+        DB::transaction(function() use ($infoDianxin, $infoSelf){
+            // 处理匹对的电信信息及录入信息
+            $infoDianxin->info_self_id = $infoSelf->id;
+            $infoDianxin->status       = '2';
 
-            // dd($requestData->all());
-            
-            $package = new Package();
-            $input =  array_replace($requestData->all());
-            $package->fill($input);
-            $package = $package->create($input);
-
-            // dd($requestData->month_price);
-           
-            foreach ($requestData->month_price as $key => $price) {
-
-                $package_info = new PackageInfo(); //套餐信息对象
-
-                $package_info->pid       = $package->id;
-                $package_info->nums      = $package->month_nums;
-                $package_info->creater_id  = Auth::id();
-                $package_info->return_month = ($key+1);
-                $package_info->return_price  = $price;
-                $package_info->save();
-
-                // dd($package_info);
+            if($infoSelf->status == '1'){
+                //第一次被返还信息
+                $infoSelf->status = '2';
+                $infoSelf->save();
             }
-            
-            return $package;
+
+            $infoDianxin->save();
+
+            return true;
         });
     }
 
