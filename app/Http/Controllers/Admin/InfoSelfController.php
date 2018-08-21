@@ -229,6 +229,7 @@ class InfoSelfController extends Controller
         * 若返还完成,则将信息状态设置为完成状态
         * 
         */
+   
         // 获取全部尚未返还完成信息
         $request['payed']        = false;
         $request['withNoPage']   = true; //获取全部数据
@@ -247,7 +248,7 @@ class InfoSelfController extends Controller
 
         // dd(lastSql());
         // dd($infoDianxins_not_dealed);
-
+        
 
         return redirect('infoSelf/notPayed')->withInput();
     }

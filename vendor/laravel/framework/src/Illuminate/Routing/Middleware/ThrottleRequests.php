@@ -73,7 +73,7 @@ class ThrottleRequests
      */
     protected function buildResponse($key, $maxAttempts)
     {
-        $response = new Response('Too Many Attempts.', 429);
+        $response = new Response('您处理数据过于频繁,请10分钟后重试', 429);
 
         $retryAfter = $this->limiter->availableIn($key);
 
