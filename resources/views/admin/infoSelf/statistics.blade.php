@@ -42,6 +42,7 @@
                                 <th>业务员</th>
                                 <th>主卡数</th>
                                 <th>副卡数</th>
+                                <th>总计</th>
                                 <th>入网日期</th>
                             </tr>
                         </thead>
@@ -50,7 +51,8 @@
                         <tr>
                         	<td>{{$statistic['nick_name'] or ''}}</td> 
                         	<td>{{$statistic['info_nums'] or ''}}</td> 
-                        	<td>{{$statistic['side_nums'] or ''}}</td> 
+                            <td>{{$statistic['side_nums'] or ''}}</td> 
+                        	<td>{{($statistic['side_nums'] + $statistic['info_nums'])}}</td> 
                             <td>{{$netin}}</td>
                             
                         </tr>

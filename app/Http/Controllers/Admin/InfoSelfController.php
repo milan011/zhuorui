@@ -47,14 +47,40 @@ class InfoSelfController extends Controller
      */
     public function index(Request $request)
     {
-        
+        $request = $this->netin_date($request);
         $select_conditions  = $request->all();
+        $request['payed']   = false;
+        $notPayed = true;
+        $info_status_now = '';
+        $action = route('infoSelf.index').'/index';
         // dd($select_conditions);
+        
+        // dd(route('infoSelf.index'));
+        /*if($request->isMethod('post')){
+
+            $netin_year  = $request->netin_year; //入网年
+            $netin_month = $request->netin_month; //入网月
+            $netin  = $request->netin_year . '-' . $request->netin_month;
+        }else{
+
+            $dt = Carbon::now(); //当前日期
+
+            $netin_year  = $dt->year;  //当前年
+            $netin_month = $dt->month; //当前月
+
+            $netin  = $netin_year . '-' . $netin_month;
+            $request->nettin_year = $netin_year;
+            $request->netin_month = $netin_month;
+            // dd($netin_year);
+        }*/
+
+        // $request->netin = $netin;
+
         $infoSelfs = $this->infoSelf->getAllInfos($request);
 
         // dd($infoSelfs[1]->hasManyInfoDianxin()->count());
         
-        return view('admin.infoSelf.index', compact('infoSelfs', 'select_conditions'));
+        return view('admin.infoSelf.index', compact('infoSelfs','action','info_status_now', 'select_conditions', 'netin', 'netin_year', 'netin_month'));
     }
 
     /**
@@ -64,15 +90,79 @@ class InfoSelfController extends Controller
      */
     public function payed(Request $request)
     {
-        
+        $request = $this->netin_date($request);
+        $info_status_now = '已付款';
         $select_conditions  = $request->all();
-        $request['payed']   = true;
+        $request['pay_status']   = 'payed';
         // dd($select_conditions);
+        $action = route('infoSelf.payed');
+
+        /*if($request->isMethod('post')){
+
+            $netin_year  = $request->netin_year; //入网年
+            $netin_month = $request->netin_month; //入网月
+            $netin  = $request->netin_year . '-' . $request->netin_month;
+        }else{
+
+            $dt = Carbon::now(); //当前日期
+
+            $netin_year  = $dt->year;  //当前年
+            $netin_month = $dt->month; //当前月
+
+            $netin  = $netin_year . '-' . $netin_month;
+            $request->nettin_year = $netin_year;
+            $request->netin_month = $netin_month;
+            // dd($netin_year);
+        }*/
+
+        // $request->netin = $netin;
+
+        $infoSelfs = $this->infoSelf->getAllInfos($request);
+        // dd($infoSelfs[0]->belongsToCreater);
+        
+        return view('admin.infoSelf.index', compact('infoSelfs', 'action', 'info_status_now','select_conditions', 'netin', 'netin_year', 'netin_month'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     * 所有信息列表
+     * @return \Illuminate\Http\Response
+     */
+    public function paying(Request $request)
+    {
+        $request = $this->netin_date($request);
+        $select_conditions  = $request->all();
+        $request['pay_status']   = 'paying';
+        $info_status_now = '付款中';
+        $action = route('infoSelf.paying');
+        // dd($select_conditions);
+        
+
+        /*if($request->isMethod('post')){
+
+            $netin_year  = $request->netin_year; //入网年
+            $netin_month = $request->netin_month; //入网月
+            $netin  = $request->netin_year . '-' . $request->netin_month;
+        }else{
+
+            $dt = Carbon::now(); //当前日期
+
+            $netin_year  = $dt->year;  //当前年
+            $netin_month = $dt->month; //当前月
+
+            $netin  = $netin_year . '-' . $netin_month;
+            $request->nettin_year = $netin_year;
+            $request->netin_month = $netin_month;
+            // dd($netin_year);
+        }*/
+
+        // $request->netin = $netin;
+
         $infoSelfs = $this->infoSelf->getAllInfos($request);
 
         // dd($infoSelfs[0]->belongsToCreater);
         
-        return view('admin.infoSelf.index', compact('infoSelfs', 'select_conditions'));
+        return view('admin.infoSelf.index', compact('infoSelfs','action', 'info_status_now', 'select_conditions', 'netin', 'netin_year', 'netin_month'));
     }
 
     /**
@@ -82,18 +172,23 @@ class InfoSelfController extends Controller
      */
     public function notPayed(Request $request)
     {
-        
-        $select_conditions  = $request->all();
-        $request['payed']   = false;
+        $request = $this->netin_date($request);
+        $select_conditions       = $request->all();
+        $request['pay_status']   = 'unpayed';
+        $info_status_now = '未付款';
         $notPayed = true;
+        $action = route('infoSelf.notPayed');
         // dd($select_conditions);
+        // dd($action);
+
+        // dd($request->all());
         $infoSelfs = $this->infoSelf->getAllInfos($request);
 
         // dd(lastSql());
         // dd($infoSelfs);
         // dd($infoSelfs[0]->belongsToCreater);
         
-        return view('admin.infoSelf.index', compact('infoSelfs', 'select_conditions', 'notPayed'));
+        return view('admin.infoSelf.index', compact('infoSelfs','action', 'info_status_now','select_conditions', 'notPayed', 'netin', 'netin_year', 'netin_month'));
     }
 
     /**
@@ -145,7 +240,7 @@ class InfoSelfController extends Controller
         $info         = $this->infoSelf->find($id);
         $package_info = $info->hasOnePackage;
 
-         // dd($package_info);
+         // dd($info->hasManyInfoDianxin);
 
         return view('admin.infoSelf.show', compact('info', 'package_info'));
     }
@@ -239,16 +334,8 @@ class InfoSelfController extends Controller
 
         // dd($infoSelfs_not_payed);
 
-        //获取全部尚未匹对的电信信息
-        
-        $request['dealed']       = false;
-        $request['withNoPage']   = true; //获取全部数据
-
-        $infoDianxins_not_dealed = $this->infoDianxin->getAllDianXinInfos($request); //尚未返还完成信息
-
-        // dd(lastSql());
-        // dd($infoDianxins_not_dealed);
-        
+        //处理已经返还完成信息
+        $infoSelfs_payed = $this->infoSelf->infopayed($request); //尚未返还完成信息
 
         return redirect('infoSelf/notPayed')->withInput();
     }
@@ -279,8 +366,11 @@ class InfoSelfController extends Controller
 
             $netin_year  = $dt->year;  //当前年
             $netin_month = $dt->month; //当前月
-
+            if(strlen($netin_month) == 1){
+                $netin_month = '0'.$netin_month;
+            }
             $netin  = $netin_year . '-' . $netin_month;
+
 
             // dd($netin_year);
         }
@@ -331,4 +421,30 @@ class InfoSelfController extends Controller
         return view('admin.infoSelf.statistics', compact('salesman_statistics', 'netin', 'netin_year', 'netin_month'));
     }
 
+    protected function netin_date($request){
+
+        if($request->isMethod('post')){
+            // p('post');
+            $netin_year  = $request->netin_year; //入网年
+            $netin_month = $request->netin_month; //入网月
+            $netin  = $request->netin_year . '-' . $request->netin_month;
+        }else{
+            // p('hehe');
+            $dt = Carbon::now(); //当前日期
+
+            $netin_year  = $dt->year;  //当前年
+            $netin_month = $dt->month; //当前月
+            // dd(strlen($netin_month));
+            if(strlen($netin_month) == 1){
+                $netin_month = '0'.$netin_month;
+            }
+            $netin  = $netin_year . '-' . $netin_month;
+            $request['netin_year']  = '';
+            $request['netin_month'] = '';
+            // dd($netin_year);
+            // dd($request->all());
+        }
+        // dd($request->all());
+        return $request;
+    }
 }

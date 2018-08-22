@@ -155,7 +155,14 @@
 <script type="text/javascript">
 
 	jQuery(document).ready(function($){
+        $('.pagination').children('li').children('a').click(function(){
 
+            // alert($(this).attr('href'));
+            $('#condition').attr('action', $(this).attr('href'));
+            // alert($('#condition').attr('action'));
+            $('#condition').submit();
+            return false;
+        });
 	});
 </script>
 

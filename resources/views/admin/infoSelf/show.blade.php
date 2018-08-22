@@ -173,5 +173,31 @@
 		</div>		
 	</div>	
 </div>  
+<div class="row-fluid">
+	<div class="box span12" style="padding:10px;">
+
+		<p class="title">[返还信息]</p>
+		<div class="box-content">
+			<table  class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>返还金额</th>
+						<th>返还序号</th>
+						<th>返还日期</th>
+					</tr>
+				</thead> 
+				<tbody>
+					@foreach ($info->hasManyInfoDianxin as $return_ifno)
+    				<tr>
+    					<td>{{$return_ifno->refunds}}</td>
+    					<td>{{$return_ifno->balance_month}}</td>
+    					<td>{{$return_ifno->netin}}</td>
+    				</tr>	
+    				@endforeach					
+				</tbody>
+			</table> 		
+		</div>		
+	</div>	
+</div>
 </section>
 @endsection

@@ -86,12 +86,9 @@ class InfoSelf extends Model
             $query = $query->where('status', $requestData['status']);
         }  
 
-        if(!empty($requestData['date'])){
-            /*p(substr($requestData['date'], 0, 10));
-            p(substr($requestData['date'], -10));
-            p(explode('-',$requestData['date']));exit;*/
-            $date_section = [substr($requestData['date'], 0, 10),substr($requestData['date'], -10)];
-            $query = $query->whereBetween('created_at', $date_section);
+        if(!empty($requestData['netin_year']) && !empty($requestData['netin_month'])){
+            $netin = $requestData['netin_year'].'-'.$requestData['netin_month'];
+            $query = $query->where('netin', $netin);
         }
         
         return $query;
@@ -131,6 +128,6 @@ class InfoSelf extends Model
     // 定义信息表与套餐表一对一关系
     public function hasManyInfoDianxin()
     {
-        return $this->hasMany('App\InfoDianxin', 'info_self_id', 'id' );
+        return $this->hasMany('App\InfoDianxin', 'info_self_id', 'id' )->orderBy('balance_month');
     }
 }

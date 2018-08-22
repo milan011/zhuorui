@@ -44,8 +44,10 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::match(['get', 'post'], 'infoSelf/notPayed', 'InfoSelfController@notPayed')->name('infoSelf.notPayed');
 	//已经付款路由
 	Route::match(['get', 'post'], 'infoSelf/payed', 'InfoSelfController@payed')->name('infoSelf.payed');
+	Route::match(['get', 'post'], 'infoSelf/paying', 'InfoSelfController@paying')->name('infoSelf.paying');
 	// 信息处理路由
-	Route::get('infoSelf/dealWith', 'InfoSelfController@dealWith')->name('infoSelf.dealWith')->middleware('throttle:0.1');;
+	// Route::get('infoSelf/dealWith', 'InfoSelfController@dealWith')->name('infoSelf.dealWith')->middleware('throttle:0.1');
+	Route::get('infoSelf/dealWith', 'InfoSelfController@dealWith')->name('infoSelf.dealWith');
 	Route::match(['get', 'post'], 'infoSelf/statistics', 'InfoSelfController@statistics')->name('infoSelf.statistics');
 	//套餐管理index
 	Route::match(['get', 'post'], 'package/index', 'PackageController@index')->name('package.index');

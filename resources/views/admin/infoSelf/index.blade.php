@@ -17,7 +17,7 @@
         <div class="pull-left">
             <ol class="breadcrumb">
                 <li><a href="{{route('admin.index')}}">首页</a></li>
-                <li class="active">信息列表</li>
+                <li class="active">信息列表({{$info_status_now}})</li>
             </ol>
         </div>
     </section>
@@ -38,13 +38,13 @@
 							<a class="btn btn-primary" href="{{route('infoSelf.dealWith')}}">处理信息</a>
 						</li>
 						@else
-						<li style="display: inline-block;line-height:20px;">
-                            <a href="#modal-select" data-toggle="modal" class="btn btn-primary btn-sm">搜索信息</a>
-						</li>
             		  	<li style="display: inline-block;line-height:20px;float:right;">
 							<a class="btn btn-primary" href="{{route('infoSelf.create')}}">添加信息</a>
 						</li>
 						@endif
+						<li style="display: inline-block;line-height:20px;">
+                            <a href="#modal-select" data-toggle="modal" class="btn btn-primary">搜索信息</a>
+						</li>
 						<li style="display:inline-block;line-height:20px;float:left;">
 							<a href="#" onclick="window.history.go(-1);return false;" class="btn ">返回</a>
 						</li>
@@ -127,17 +127,32 @@
                     <h4 id="myModalLabel" class="modal-title">信息搜索</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" id="condition" action="{{route('infoSelf.index')}}/index" method="post">
+                    <form class="form-horizontal" id="condition" action="{{$action}}" method="post">
                     {!! csrf_field() !!}
                         <fieldset>
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="text" value="{{$select_conditions['user_telephone'] or ''}}"  name="user_telephone" placeholder="客户电话" class="col-md-12 form-control mbm" />
-                                <input type="text" name="date" value="{{$select_conditions['date'] or ''}}" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
-                                <label class="control-label" for="category_type">信息状态:</label>
-                                <select name="status" class="col-md-4 form-control mbm">
-                                    <option value=''>不限</option>                                        
-                                </select>
+                                <div class="form-group">
+                                <label class="control-label col-md-2">入网: </label>
+                                <div class="col-md-4">
+
+                                    <select class="form-control" name="netin_year" style="display: inline-block;">
+                                    	<option value="">--年--</option>
+                                        @foreach($package_year as $key=>$year)
+                                        <option @if(($select_conditions['netin_year']) == ($year)) selected='selected' @endif value="{{$year}}" >{{$year}}</option>
+                                        <option @if(($select_conditions['netin_year']) == ($year)) selected='selected' @endif value="{{$year}}" >{{$year}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control" name="netin_month" style="display: inline-block;">
+                                    	<option value="">--月--</option>
+                                        @foreach($package_month as $key=>$mo)
+                                        <option @if(($select_conditions['netin_month']) == ($key)) selected='selected' @endif value="{{$mo}}" >{{$mo}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                        </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -181,7 +196,14 @@
 <script type="text/javascript">
 
 	jQuery(document).ready(function($){
-		
+		$('.pagination').children('li').children('a').click(function(){
+
+			// alert($(this).attr('href'));
+			$('#condition').attr('action', $(this).attr('href'));
+			// alert($('#condition').attr('action'));
+			$('#condition').submit();
+			return false;
+		});
 	});
 </script>
 

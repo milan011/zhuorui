@@ -38,8 +38,30 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
         $query = new InfoSelf();       // 返回的是一个Plan实例,两种方法均可
         // dd($request->all());
         $query = $query->addCondition($request->all()); //根据条件组合语句
-
-        if(isset($request->payed)){
+        // dd($request->pay_status);
+        switch ($request->pay_status) {
+            case 'payed':
+                # 已返还全部金额
+                $query = $query->where('status', '3');
+                $query = $query->where('status','!=', '0');
+                break;
+            case 'paying':
+                # 返还中...
+                $query = $query->where('status', '2');
+                $query = $query->where('status','!=', '0');
+                $query = $query->where('old_bind', '0');
+            break;
+            case 'unpayed':
+                # 尚未返还
+                $query = $query->where('status', '1');
+                $query = $query->where('status','!=', '0');
+                $query = $query->where('old_bind', '0');
+            break;
+            default:
+                # code...
+                break;
+        }
+        /*if(isset($request->payed)){
             if($request->payed){
                 //已经付款
                 $query = $query->where('status', '3');
@@ -50,7 +72,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
                 $query = $query->where('status','!=', '0');
                 $query = $query->where('old_bind', '0');
             }
-        }
+        }*/
         
         // $query = $query->chacneLaunch($request->Plan_launch);
         // 
@@ -309,6 +331,33 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
         });
     }
 
+    //已返还完成信息处理
+    public function infoPayed($requestData){
+
+        // dd($request->Plan_launch);
+        // $query = Plan::query();  // 返回的是一个 QueryBuilder 实例
+        $query = new InfoSelf();       // 返回的是一个Plan实例,两种方法均可
+
+        $un_payed = $query->select($this->select_columns)
+                     ->where('status', '2')
+                     ->orderBy('created_at', 'DESC')
+                     ->get();
+        foreach ($un_payed->chunk(10) as $key => $value) {
+            # code...
+            foreach ($value as $k => $v) {
+                /*p($v->package_month);
+                dd($v->hasManyInfoDianxin);*/
+
+                if($v->package_month == $v->hasManyInfoDianxin()->count()){
+                    //已返还月符合套餐返还月数
+                    $v->status = '3';
+                    $v->save();
+                }
+            }
+        }
+        // dd($un_payed[0]->hasManyInfoDianxin()->count());
+        return true;
+    }
 
     //约车状态转换，暂时只有激活-废弃转换
     public function statusChange($requestData, $id){
