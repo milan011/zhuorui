@@ -86,69 +86,6 @@
                                 <input type="email" required name="email" placeholder="常用邮箱" class="form-control" value="{{old('email')}}" />
                             </div>
                         </div>
-                        <!-- 用户角色 -->
-                        <div class="form-group">
-                            <label class="col-md-1 control-label">用户角色</label>
-                            <div class="col-md-2">
-                                <select class="form-control" name="role_id" id="role_id">
-                                    <option  value="0">---请选择角色---</option>
-                                    @foreach($role_add_allow as $key=>$value)
-                                    <option data="{{$value->level}}" value="{{$value->id}}" >{{$value->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <!-- 用户代理等级 -->
-                        <!-- <div class="form-group" style="display: none;">
-                            <label class="col-md-1 control-label">代理等级</label>
-                            <div class="col-md-2">
-                                <select class="form-control" name="level" id="role_level">
-                                    <option  value="0">---请选择代理等级---</option>
-                                    @foreach($agents_level as $key=>$value)
-                                    <option value="{{$key}}" >{{$value}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div> -->
-                        <!-- 用户代理上溯 -->
-                        <div class="form-group" id="agents_chain" style="display:none;">
-                            <label class="col-md-1 control-label">上级代理</label>
-                            <div class="col-md-8">
-                                <select class="form-control select2" name="pid" id="pid" style="width:25%;display: inline-block;">
-                                    <option  value="0">--请选择上级代理--</option>
-                                    @foreach($agents_total as $key=>$value)
-                                    <option data="{{$value->level}}" value="{{$value->id}}" >{{$value->nick_name}}</option>
-                                    @endforeach                                  
-                                </select>
-                                <!-- <select class="form-control" name="agents_frist" id="agents_frist" style="width:15%;display: none;">
-                                    <option  value="0">--一级代理--</option>
-                                </select>
-                                <select class="form-control" name="agents_secend" id="agents_secend" style="width:15%;display: none;">
-                                    <option  value="0">--二级代理--</option>
-                                </select> -->
-                            </div>
-                        </div>
-                        <!-- <div class="form-group" id="agents_chain" style="display:none;">
-                            <label class="control-label">代理链</label>
-                            <div class="col-md-2">
-                                <select class="form-control" id="agents_total" name="agents_total" style="width:15%">
-                                    <option value="0">请选择总代理</option>
-                                </select>
-                                <select class="form-control" id="agents_frist" name="agents_frist" style="display:none;width:15%;">
-                                    <option  value="0">请选择一级</option>
-                                </select>
-                                <select class="form-control" id="agents_secend" name="agents_secend" style="display:none;width:15%;">
-                                    <option  value="0">请选择二级</option>
-                                </select>
-                            </div>
-                        </div> -->
-                        <!-- 用户地址/收货地址添加 -->
-                        <!-- <div class="form-group">
-                            <label class="col-md-1 control-label">地址/收货地址</label>
-                            <div class="col-md-4">
-                                <input type="text" name="address" placeholder="地址" class="form-control shaddress" value="" />
-                            </div>
-                        </div> -->
                         <!-- 备注 -->
                         <div class="form-group">
                             <label class="col-md-1 control-label">备注</label>
@@ -156,11 +93,8 @@
                             <textarea id="remark" name="remark" required style="width:400px;">{{old('remark')}}</textarea>
                             </div>
                         </div>
-
                         <div class="form-group">
-
                             <div class="col-md-4" style="text-align:center;">
-                                <input type="hidden" name="agents_ajax_request_url" value="{{route('user.getParentAgents')}}">
                              	<button type="submit" class="btn btn-sm btn-success">添加</button>
                                 <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
                             </div>

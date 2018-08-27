@@ -68,7 +68,7 @@ class UserController extends Controller {
 		// p($role_add_allow);
 
 		//所有总代、一级代理、二级代理
-		$agents_total = $this->users->getAllSuppliers();
+		// $agents_total = $this->users->getAllSuppliers();
 		// dd(lastSql());
 		// dd($agents_total);
 
@@ -82,14 +82,11 @@ class UserController extends Controller {
 			'7' => '零售客户',
 		);*/
 
-		$role_add_allow = Role::select('id', 'name', 'level')
+		/*$role_add_allow = Role::select('id', 'name', 'level')
 							  ->where('level', '>=', '0')
-							  ->get();
+							  ->get();*/
 		// dd($role_add_allow);
-		return view('admin.user.create', compact(
-				'role_add_allow', 
-				'agents_total'
-			));
+		return view('admin.user.create');
 	}
 
 	//获得用户子代理(非递归)

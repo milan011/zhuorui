@@ -22,13 +22,13 @@ class StoreUserRequest extends Request {
 	 */
 	public function rules() {
 		return [
-			'name' => 'required|unique:yz_users',
-			'nick_name' => 'required|unique:yz_users',
+			'name' => 'required|unique:zr_users',
+			'nick_name' => 'required|unique:zr_users',
 			'password' => 'required|min:6|confirmed',
 			'password_confirmation' => 'required|min:6',
 			'telephone' => 'required|phone_number',
-			'email' => 'required|email|unique:yz_users',
-			'role_id' => 'required|numeric|min:1',
+			'email' => 'required|email|unique:zr_users',
+			// 'role_id' => 'required|numeric|min:1',
 		];
 	}
 
@@ -50,8 +50,8 @@ class StoreUserRequest extends Request {
 			'password_confirmation.min' => '确认密码不能少于6位',
 			'telephone.required' => '请输入手机号码',
 			'telephone.phone_number' => '手机号码无效',
-			'role_id.required' => '请选择角色',
-			'role_id.min' => '请选择角色',
+			/*'role_id.required' => '请选择角色',
+			'role_id.min' => '请选择角色',*/
 			'email.required' => '请输入邮箱地址',
 			'email.unique' => '邮箱地址已被使用',
 			'email.email' => '邮箱格式错误',

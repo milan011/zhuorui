@@ -70,7 +70,7 @@ class Handler extends ExceptionHandler
         if ($e instanceof HttpException) {
             $code = $e->getStatusCode();
             p('哥我异常了!');
-            dd($code);
+            dd($e);
             if (view()->exists('errors.' . $code)) {
                 $message  = $e->getMessage();
                 return response()->view('errors.' . $e->getStatusCode(), ['message'=>$message], $e->getStatusCode());
@@ -78,7 +78,7 @@ class Handler extends ExceptionHandler
         }       
         
         if(($e instanceof \Illuminate\Database\QueryException)){
-            p('ma ge bi');
+            // p('ma ge bi');
             dd($e);
         }
 

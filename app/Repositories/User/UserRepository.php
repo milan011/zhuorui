@@ -11,7 +11,7 @@ use Session;
 class UserRepository implements UserRepositoryContract {
 
 	//默认查询数据
-	protected $select_columns = ['id', 'name', 'nick_name', 'telephone', 'email', 'wx_number', 'address', 'status', 'pid', 'level', 'created_at','remark'];
+	protected $select_columns = ['id','name', 'nick_name', 'password', 'telephone', 'wx_number', 'address', 'creater_id', 'status', 'email',  'created_at',  'remark'];
 
 	// 获得用户信息
 	public function find($id) {
@@ -37,10 +37,10 @@ class UserRepository implements UserRepositoryContract {
     //根据用户角色获得用户
     public function getAllUsersByRole($role_id){
 
-        /*$users = DB::table('yz_users')
-                   // ->leftJoin('role_user', 'yz_users.id', '=', 'role_user.user_id')
+        /*$users = DB::table('zr_users')
+                   // ->leftJoin('role_user', 'zr_users.id', '=', 'role_user.user_id')
 
-                   // ->select('yz_users.*')
+                   // ->select('zr_users.*')
                    ->get();*/
 
         $users = DB::table('zr_users')
@@ -85,9 +85,9 @@ class UserRepository implements UserRepositoryContract {
 
 		// dd($requestData->all());
 		$password = bcrypt($requestData->password);
-		$role_id = $requestData->role_id;
+		/*$role_id = $requestData->role_id;
 
-		$role_info = Role::findOrFail($role_id);
+		$role_info = Role::findOrFail($role_id);*/
 
 		/*p($requestData->agents_total);
         p($requestData->agents_frist);
@@ -105,7 +105,7 @@ class UserRepository implements UserRepositoryContract {
         }*/
 
 		// 添加用户到用户表
-		$input = array_replace($requestData->all(), ['password' => "$password", 'creater_id' => Auth::id(), 'level' => $role_info->level]);
+		$input = array_replace($requestData->all(), ['password' => "$password", 'creater_id' => Auth::id()]);
 
 		// dd($input);
 
@@ -113,7 +113,7 @@ class UserRepository implements UserRepositoryContract {
 
 		// 关联用户表与用户-角色表
 		$userRole = new RoleUser;
-		$userRole->role_id = $role_id;
+		$userRole->role_id = '3';
 		$userRole->user_id = $user->id;
 		$userRole->save();
 
@@ -166,7 +166,7 @@ class UserRepository implements UserRepositoryContract {
 		try {
 			$user = User::findorFail($id);
 			// $user->delete();
-            dd($user);
+            // dd($user);
             // 修改用户状态
             $user->status    = '0';
             $user->save();      // 
@@ -202,11 +202,11 @@ class UserRepository implements UserRepositoryContract {
     //获得子代理
     public function getChildUser($user_id) {
 
-        return User::select(['yz_users.id', 'yz_users.pid', 'yz_users.name', 'yz_users.nick_name', 'yz_users.level', 'roles.name as role_name'])
-                   ->join('roles', 'yz_users.level', '=', 'roles.level')
+        return User::select(['zr_users.id', 'zr_users.pid', 'zr_users.name', 'zr_users.nick_name', 'zr_users.level', 'roles.name as role_name'])
+                   ->join('roles', 'zr_users.level', '=', 'roles.level')
                    ->where('pid', $user_id)
                    ->where('status', '1')
-                   ->orderBy('yz_users.level', 'asc')
+                   ->orderBy('zr_users.level', 'asc')
                    ->get();
     }
 
@@ -217,11 +217,11 @@ class UserRepository implements UserRepositoryContract {
             ->where('id', $user_id)
             ->first();
         // dd($pid->pid);
-        return User::select(['yz_users.id', 'yz_users.pid', 'yz_users.name', 'yz_users.nick_name', 'yz_users.level', 'roles.name as role_name'])
-            ->join('roles', 'yz_users.level', '=', 'roles.level')
-            ->where('yz_users.id', $pid->pid)
+        return User::select(['zr_users.id', 'zr_users.pid', 'zr_users.name', 'zr_users.nick_name', 'zr_users.level', 'roles.name as role_name'])
+            ->join('roles', 'zr_users.level', '=', 'roles.level')
+            ->where('zr_users.id', $pid->pid)
             ->where('status', '1')
-            ->orderBy('yz_users.level', 'asc')
+            ->orderBy('zr_users.level', 'asc')
             ->first();
     }
 

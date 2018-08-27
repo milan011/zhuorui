@@ -35,10 +35,10 @@
                 <div class="panel-body">
                     <ul class="nav nav-tabs">
                           <li style="display: inline-block;line-height:20px;">
-                            <a class="btn btn-search" href="javascript:void(0);"><i class="halflings-icon search"></i>搜索商户</a>
+                            <a class="btn btn-search" href="javascript:void(0);"><i class="halflings-icon search"></i>搜索用户</a>
                         </li>
                           <li style="display: inline-block;line-height:20px;float:right;">
-                            <a class="btn btn-primary" href="{{route('user.create')}}">添加商户</a>
+                            <a class="btn btn-primary" href="{{route('user.create')}}">添加用户</a>
                         </li>
                         <li style="display:inline-block;line-height:20px;float:right;">
                             <a href="#" onclick="window.history.go(-1);return false;" class="btn ">返回</a>
@@ -73,9 +73,7 @@
                                     <i class="icon-edit icon-white"></i> 编辑
                                 </a>
                                 <input type="hidden" name="user_id" value="{{$user->id}}">
-                                <!-- <a class="btn btn-success" href="{{route('user.address', ['user'=>$user->id])}}">
-                                    <i class="icon-edit icon-white"></i> 地址管理
-                                </a> -->
+                                
                                 <span>
                                 <form action="{{route('user.destroy', ['user'=>$user->id])}}" method="post" style="display: inherit;margin:0px;">
                                     {{ csrf_field() }}
