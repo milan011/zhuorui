@@ -170,10 +170,10 @@ class UserRepository implements UserRepositoryContract {
             // 修改用户状态
             $user->status    = '0';
             $user->save();      // 
-			Session()->flash('sucess', '删除管理员成功');
+			Session()->flash('sucess', '删除用户成功');
 
 		} catch (\Illuminate\Database\QueryException $e) {
-			Session()->flash('faill', '删除管理员失败');
+			Session()->flash('faill', '删除用户失败');
 		}
 
 	}
