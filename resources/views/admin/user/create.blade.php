@@ -74,23 +74,23 @@
                         </div>
                         <!-- 微信号 -->
                         <div class="form-group">
-                            <label class="col-md-1 control-label"><font style="color:red;">*</font>微信号</label>
+                            <label class="col-md-1 control-label">微信号</label>
                             <div class="col-md-4">
-                                <input type="text" required name="wx_number" placeholder="微信号" class="form-control" value="{{old('wx_number')}}" />
+                                <input type="text" name="wx_number" placeholder="微信号" class="form-control" value="{{old('wx_number')}}" />
                             </div>
                         </div>
                         <!-- 邮箱 -->
                         <div class="form-group">
-                            <label class="col-md-1 control-label"><font style="color:red;">*</font>常用邮箱</label>
+                            <label class="col-md-1 control-label">常用邮箱</label>
                             <div class="col-md-4">
-                                <input type="email" required name="email" placeholder="常用邮箱" class="form-control" value="{{old('email')}}" />
+                                <input type="email" name="email" placeholder="常用邮箱" class="form-control" value="{{old('email')}}" />
                             </div>
                         </div>
                         <!-- 备注 -->
                         <div class="form-group">
                             <label class="col-md-1 control-label">备注</label>
                             <div class="col-md-4">
-                            <textarea id="remark" name="remark" required style="width:400px;">{{old('remark')}}</textarea>
+                            <textarea id="remark" name="remark" style="width:400px;">{{old('remark')}}</textarea>
                             </div>
                         </div>
                         <div class="form-group">

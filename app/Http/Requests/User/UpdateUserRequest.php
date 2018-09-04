@@ -29,7 +29,7 @@ class UpdateUserRequest extends Request {
 			'nick_name' => 'required',
 			'nick_name' => "unique:zr_users,nick_name," . $id,
 			'email' => 'required|email',
-			'email' => "unique:zr_users,email," . $id,
+			// 'email' => "unique:zr_users,email," . $id,
 			'telephone' => 'required|phone_number',
 			// 'role_id' => 'required|numeric|min:1',
 		];
@@ -50,9 +50,9 @@ class UpdateUserRequest extends Request {
 			'telephone.phone_number' => '手机号码无效',
 			/*'role_id.required' => '请选择角色',
 			'role_id.min' => '请选择角色',*/
-			'email.required' => '请输入邮箱地址',
+			/*'email.required' => '请输入邮箱地址',
 			'email.unique' => '邮箱地址已被使用',
-			'email.email' => '邮箱格式错误',
+			'email.email' => '邮箱格式错误',*/
 		];
 	}
 }

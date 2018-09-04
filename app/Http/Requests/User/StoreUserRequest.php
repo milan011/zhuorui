@@ -27,7 +27,7 @@ class StoreUserRequest extends Request {
 			'password' => 'required|min:6|confirmed',
 			'password_confirmation' => 'required|min:6',
 			'telephone' => 'required|phone_number',
-			'email' => 'required|email|unique:zr_users',
+			// 'email' => 'required|email|unique:zr_users',
 			// 'role_id' => 'required|numeric|min:1',
 		];
 	}
@@ -52,9 +52,9 @@ class StoreUserRequest extends Request {
 			'telephone.phone_number' => '手机号码无效',
 			/*'role_id.required' => '请选择角色',
 			'role_id.min' => '请选择角色',*/
-			'email.required' => '请输入邮箱地址',
+			/*'email.required' => '请输入邮箱地址',
 			'email.unique' => '邮箱地址已被使用',
-			'email.email' => '邮箱格式错误',
+			'email.email' => '邮箱格式错误',*/
 		];
 	}
 }
