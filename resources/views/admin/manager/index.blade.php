@@ -60,7 +60,7 @@
                                 </a>
                             </td>
                             <td>{{$manager->telephone or ''}}</td>                           
-                            <td>{{substr($manager->created_at, 0 ,10)}}</td>                                
+                            <td>{{$manager->belongsToCreater->nick_name}}|{{substr($manager->created_at, 0 ,10)}}</td>
                             <td class="center">
                                 <!-- <a class="btn btn-success" target="_blank" href="{{route('manager.show', ['manager'=>$manager->id])}}">
                                     <i class="icon-edit icon-white"></i> 查看
