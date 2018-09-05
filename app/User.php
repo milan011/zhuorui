@@ -175,7 +175,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		// return Auth::id() === 1;
 		$user_role_id = Auth::user()->hasManyUserRole[0]->role_id; //用户角色id
 
-		return ($user_role_id == config('tcl.user_role_type')['超级管理员']) || ($user_role_id == config('tcl.user_role_type')['总部管理员']);
+		return ($user_role_id == config('zhuorui.user_role_type')['超级管理员']) || ($user_role_id == config('zhuorui.user_role_type')['管理员']);
 	}
 
 	// 是否店长

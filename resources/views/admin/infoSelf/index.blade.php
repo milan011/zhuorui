@@ -52,9 +52,11 @@
                     <table id="datatables" class="table table-striped table-border">
                         <thead class="bg-default">
                             <tr>
-                                <th>编号</th>
+                                {{-- <th>编号</th> --}}
                                 <th>项目</th>
                                 <th>新卡</th>
+                                <th>副卡数</th>
+                                <th>集团卡</th>
                                 <th>套餐</th>
                                 <th>客户</th>
                                 <th>电话</th>
@@ -67,13 +69,15 @@
                         <tbody>
                         @foreach ($infoSelfs as $info)
                         <tr>
-                        	<td>
-                        		<a target="_blank" href="{{route('infoSelf.show', ['info'=>$info->id])}}">
-                        			{{$info->code or ''}}
-                        		</a>
-                        	</td> 
-                        	<td>{{$info->project_name or ''}}</td> 
-                        	<td>{{$info->new_telephone or ''}}</td> 
+                        	<!-- <td>
+                                <a target="_blank" href="{{route('infoSelf.show', ['info'=>$info->id])}}">
+                                    {{$info->code or ''}}
+                                </a>
+                            </td>  -->
+                            <td>{{$info->project_name or ''}}</td> 
+                            <td>{{$info->new_telephone or ''}}</td> 
+                        	<td>{{$info->side_number_num}}</td> 
+                            <td>@if($info->is_jituan == 1) <span style="color:#68b828;">是</span> @else <span style="color:#d50d24">否</span> @endif </td> 
                         	<td>{{$info->hasOnePackage->name or ''}}</td> 
                             <td>{{$info->name}}</td>
                             <td>{{$info->user_telephone or ''}}</td>                           

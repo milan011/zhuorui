@@ -20,10 +20,10 @@ use Debugbar;
 class InfoSelfRepository implements InfoSelfRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['code', 'id', 'name', 'user_telephone', 'old_bind', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'package_month', 'package_id', 'status','remark','created_at'];
+    protected $select_columns = ['code', 'id', 'name', 'user_telephone', 'side_uim_number', 'side_uim_number_num','old_bind', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number',  'is_jituan','side_number','side_number_num', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'package_month', 'package_id', 'status','remark','created_at'];
 
 
-    // 根据ID获得约车信息
+    // 根据ID获得信息
     public function find($id)
     {
         return InfoSelf::select($this->select_columns)
@@ -43,18 +43,18 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
             case 'payed':
                 # 已返还全部金额
                 $query = $query->where('status', '3');
-                $query = $query->where('status','!=', '0');
+                
                 break;
             case 'paying':
                 # 返还中...
                 $query = $query->where('status', '2');
-                $query = $query->where('status','!=', '0');
+                
                 $query = $query->where('old_bind', '0');
             break;
             case 'unpayed':
                 # 尚未返还
                 $query = $query->where('status', '1');
-                $query = $query->where('status','!=', '0');
+                
                 $query = $query->where('old_bind', '0');
             break;
             default:
@@ -78,17 +78,30 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
         // 
         if($request->withNoPage){ //无分页,全部返还
 
-            return $query->select($this->select_columns)
+            $infos = $query->select($this->select_columns)
                      ->orderBy('created_at', 'DESC')
+                     ->where('status','!=', '0')
                      ->get();
         }else{
 
-            return $query->select($this->select_columns)
+            $infos = $query->select($this->select_columns)
+                     ->where('status','!=', '0')
                      ->orderBy('created_at', 'DESC')
                      ->paginate(10);
         }
 
-        
+        /*foreach ($infos as $key => $value) {
+            if (!empty($value->side_number)){
+                // dd($value->side_number);
+                $side_number = explode("|",  $value->side_number);
+                dd(count($side_number));
+                $vaule->side_numbers = count($side_number);
+            }else{
+                $vaule->side_numbers = '0';
+            }
+        }*/
+
+        return $infos;
     }
 
 
@@ -102,6 +115,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
         return $query->select($this->select_columns)
                      ->where('creater_id', $creater_id)
                      ->where('netin', $netin)
+                     ->where('status', '!=', '0')
                      ->get();
     }
 
@@ -131,23 +145,71 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
             // dd($manager);
             // 处理副卡信息
             // dd($requestData->all());
-            if (!empty($requestData['side_numbers'])){
 
-                $side_number = implode("|",  array_unique($requestData['side_numbers']));
+            $side_list_info = [];
+            $side_number_arr= [];
+            $side_uim_number_arr= [];
+
+            if(!empty($requestData['side_numbers'])){
+
+                foreach ($requestData['side_numbers'] as $key => $value) {
+
+                    $side_list_info[$key]['side'] = $value;
+                    $side_list_info[$key]['uim']  = $requestData['side_uim_numbers'][$key];
+                }
+
+                $side_list = a_array_unique($side_list_info);
+
+                foreach ($side_list as $key => $value) {
+                    $side_number_arr[]     = $value['side'];
+                    $side_uim_number_arr[] = $value['uim'];
+                }
+
+                $side_number     = implode("|",  $side_number_arr);
+                $side_uim_number = implode("|",  $side_uim_number_arr);
             }
             
+            
+            /*p(count($side_list));
+            p($side_number);
+            p($side_uim_number);
+            dd($side_list);
+            dd($side_list_info);*/
+
+            
+
+            /*if (!empty($requestData['side_numbers'])){
+
+                $side_number     = implode("|",  array_unique($requestData['side_numbers']));
+                $side_number_num = count($requestData['side_numbers']);
+            }else{
+                $side_number_num = 0;
+            }
+            
+            //处理副卡uim码
+            if (!empty($requestData['side_uim_numbers'])){
+
+                $side_uim_number     = implode("|",  array_unique($requestData['side_uim_numbers']));
+                $side_uim_number_num = count($requestData['side_uim_numbers']);
+            }else{
+                $side_uim_number_num = 0;
+            }*/
 
             // dd($side_number);
 
-            $requestData['code']             = getInfoCode();
-            $requestData['manage_name']      = $manager->name;
-            $requestData['manage_id']        = $manager->id;
-            $requestData['manage_telephone'] = $manager->telephone;
-            $requestData['package_month']    = $package->month_nums;
-            $requestData['user_telephone']   = $requestData['telephone'];
-            $requestData['side_number']      = $side_number;
-            $requestData['netin']            = $requestData['netin_year'].'-'.$requestData['netin_moth'];
-            $requestData['old_bind']         = isset($requestData['old_bind']) ? '1' : '0';
+            $requestData['code']                 = getInfoCode();
+            $requestData['manage_name']          = $manager->name;
+            $requestData['manage_id']            = $manager->id;
+            $requestData['manage_telephone']     = $manager->telephone;
+            $requestData['package_month']        = $package->month_nums;
+            $requestData['user_telephone']       = $requestData['telephone'];
+            $requestData['side_number']          = $side_number;
+            $requestData['side_number_num']      = count($side_list);
+            $requestData['side_uim_number']      = $side_uim_number;
+            $requestData['side_uim_number_num']  = count($side_list);
+            $requestData['netin']                = $requestData['netin_year'].'-'.$requestData['netin_moth'];
+            $requestData['old_bind']             = isset($requestData['old_bind']) ? '1' : '0';
+            $requestData['is_jituan']            = isset($requestData['is_jituan']) ? '1' : '0';
 
             // dd($requestData->all());
 
@@ -172,25 +234,49 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
 
         // 处理副卡信息
         // dd($requestData->all());
-        if (!empty($requestData['side_numbers'])){
-            $side_number = implode("|",  array_unique($requestData['side_numbers']));
-        }
+        $side_list_info = [];
+        $side_number_arr= [];
+        $side_uim_number_arr= [];
 
-        // dd($side_number);
+            if(!empty($requestData['side_numbers'])){
+
+                foreach ($requestData['side_numbers'] as $key => $value) {
+                    
+                    $side_list_info[$key]['side'] = $value;
+                    $side_list_info[$key]['uim']  = $requestData['side_uim_numbers'][$key];
+                }
+
+                $side_list = a_array_unique($side_list_info);
+
+                foreach ($side_list as $key => $value) {
+                    $side_number_arr[]     = $value['side'];
+                    $side_uim_number_arr[] = $value['uim'];
+                }
+
+                // dd($side_number_arr);
+                $side_number     = implode("|",  $side_number_arr);
+                $side_uim_number = implode("|",  $side_uim_number_arr);
+            }
+
+        // dd($side_list);
         
-        $info->name             = $requestData->name;
-        $info->user_telephone   = $requestData->telephone;
-        $info->manage_name      = $manager->name;
-        $info->manage_telephone = $manager->telephone;
-        $info->manage_id        = $requestData->manager;
-        $info->project_name     = $requestData->project_name;
-        // $info->new_telephone    = $requestData->new_telephone;
-        $info->uim_number       = $requestData->uim_number;
-        $info->collections      = $requestData->collections;
-        $info->side_number      = $side_number;
-        $info->collections_type = $requestData->collections_type;
-        $info->netin            = $requestData->netin_year.'-'.$requestData->netin_moth;
-        $info->old_bind         = isset($requestData->old_bind) ? '1' : '0';
+        $info->name                 = $requestData->name;
+        $info->user_telephone       = $requestData->telephone;
+        $info->manage_name          = $manager->name;
+        $info->manage_telephone     = $manager->telephone;
+        $info->manage_id            = $requestData->manager;
+        $info->package_id           = $requestData->package_id;
+        $info->project_name         = $requestData->project_name;
+        $info->side_number_num      = count($side_list);
+        $info->uim_number           = $requestData->uim_number;
+        $info->collections          = $requestData->collections;
+        $info->side_number          = $side_number;
+        $info->side_uim_number      = $side_uim_number;
+        $info->side_uim_number_num  = count($side_list);
+        $info->collections_type     = $requestData->collections_type;
+        $info->netin                = $requestData->netin_year.'-'.$requestData->netin_moth;
+        $info->old_bind             = isset($requestData->old_bind) ? '1' : '0';
+        $info->is_jituan            = isset($requestData->is_jituan) ? '1' : '0';
 
 
         Session::flash('sucess', '信息修改成功');

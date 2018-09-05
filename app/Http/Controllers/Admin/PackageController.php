@@ -20,7 +20,6 @@ class PackageController extends Controller
     ) {
     
         $this->package = $package;
-
         // $this->middleware('brand.create', ['only' => ['create']]);
     }
 

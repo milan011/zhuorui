@@ -22,7 +22,7 @@ class Manager extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['id', 'name', 'telephone', 'wx_number', 'remark', 'email','address','creater_id','status','created_at','updated_at'];
+    protected $fillable = ['id', 'name', 'telephone', 'wx_number', 'first_letter','remark', 'email','address','creater_id','status','created_at','updated_at'];
 
     /**
      * The attributes excluded from the model's JSON form.

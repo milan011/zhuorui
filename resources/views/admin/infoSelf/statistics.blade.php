@@ -54,7 +54,6 @@
                             <td>{{$statistic['side_nums'] or ''}}</td> 
                         	<td>{{($statistic['side_nums'] + $statistic['info_nums'])}}</td> 
                             <td>{{$netin}}</td>
-                            
                         </tr>
                         @endforeach 
                         </tbody>

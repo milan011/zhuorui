@@ -138,17 +138,34 @@
 				</span>
 			</p>
 		</div>
-		<div class="col-xs-12">
-			<p class="detial">
-				<span style="display:inline;">
-					<i>副卡:</i>
-					{{$info->side_number}}
-				</span>
-				
-			</p>
-		</div>
 	</div>	
 </div> 
+<div class="row-fluid">
+	<div class="box span12" style="padding:10px;">
+
+		<p class="title">[副卡信息]</p>
+		<div class="box-content">
+			<table  class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>副卡</th>
+						<th>副卡uim</th>
+					</tr>
+				</thead> 
+				<tbody>
+    				<tr>
+    				@if(!empty($side_number_array))
+    					@foreach($side_number_array as $key=>$side_number)
+    					<td>{{$side_number}}</td>
+    					<td>{{$side_uim_number_array[$key]}}</td>
+    					@endforeach
+    				@endif
+    				</tr>						
+				</tbody>
+			</table> 		
+		</div>		
+	</div>	
+</div>
 <div class="row-fluid">
 	<div class="box span12" style="padding:10px;">
 

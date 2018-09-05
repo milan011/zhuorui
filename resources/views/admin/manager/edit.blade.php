@@ -45,6 +45,12 @@
                                 <input type="text" name="name" required placeholder="客户经理名" class="form-control" value="{{$manager->name}}"/>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label"><font style="color:red;">*</font>首字母</label>
+                            <div class="col-md-4">
+                                <input type="text" name="first_letter" placeholder="首字母大写" class="form-control" value="{{$manager->first_letter}}"/>
+                            </div>
+                        </div>
                         <!-- 联系电话 -->
                         <div class="form-group">
                             <label class="col-md-1 control-label">联系电话</label>
@@ -125,7 +131,23 @@
                             message: '请输入姓名'
                         }
                     }
-                },              
+                },   
+                first_letter: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入客户经理名首字母'
+                        },
+                        regexp: {
+                            regexp: /^[A-Z]+$/,
+                            message: '请输入大写字母!'
+                        },
+                        stringLength: {
+                            min: 1,
+                            max: 1,
+                            message: '首字母一位即可'
+                        },
+                    }
+                },           
             }
         });
     });

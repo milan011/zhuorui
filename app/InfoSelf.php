@@ -24,7 +24,7 @@ class InfoSelf extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['code', 'name', 'user_telephone', 'old_bind', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'status', 'package_month', 'remark', 'package_id'];
+    protected $fillable = ['code', 'name', 'user_telephone', 'old_bind', 'side_uim_number', 'side_uim_number_num', 'is_jituan', 'manage_name', 'manage_telephone', 'manage_id', 'project_name', 'new_telephone', 'uim_number', 'side_number', 'side_number_num','netin', 'collections', 'balance_month', 'collections_type', 'creater_id', 'status', 'package_month', 'remark', 'package_id'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -57,22 +57,13 @@ class InfoSelf extends Model
 
         $query = $this;
 
-        /*if($is_self){
 
-            if(!(Auth::user()->isSuperAdmin())){
 
-               if(Auth::user()->isMdLeader()){
-                    //店长
-                    $user_shop_id = Auth::user()->shop_id; //用户所属门店id
-                    // $this->where('shop_id', $user_shop_id);
-                    $query = $query->where('shop_id', $user_shop_id);    
-                }else{
-                    //店员
-                    // $this->where('creater_id', Auth::id());
-                    $query = $query->where('creater_id', Auth::id());  
-                } 
-            }           
-        }*/
+        if(!(Auth::user()->isSuperAdmin())){
+
+            $query = $query->where('creater_id', Auth::id());  
+
+        }           
 
         if(!empty($requestData['order_code'])){  //有订单号
 

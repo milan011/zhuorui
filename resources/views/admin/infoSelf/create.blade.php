@@ -36,82 +36,7 @@
                 <div class="panel-body">
                     <form action="{{route('infoSelf.store')}}" id="manager_store" class="form-horizontal" method="post">
                     {!! csrf_field() !!}
-                    <!-- 新号码 -->
-                        <div class="form-group">
-                            <label class="col-md-1 control-label">新号码:</label>
-                            <div class="col-md-4">
-                                <input type="text"  name="new_telephone" placeholder="新号码" class="form-control" value="{{old('new_telephone')}}" />
-                            </div>
-                        </div>
-                        <!-- 项目名称 -->
-                        <div class="form-group">
-                            <label class="col-md-1 control-label"><font style="color:red;">*</font>项目名称:</label>
-                            <div class="col-md-4">
-                                <input type="text" name="project_name" required placeholder="项目名称" class="form-control" value="{{old('project_name')}}"/>
-                            </div>
-                        </div>
-                        <!-- 客户经理 -->
-                        <div class="form-group">
-                            <label class="control-label col-md-1">客户经理:</label>
-                            <div class="col-md-8">
-                                <select class="form-control" id="manager" name="manager" style="width:15%;display: inline-block;">
-                                    @foreach($managers as $key=>$manager)
-                                        <option value="{{$manager->id}}" >{{$manager->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <!-- 套餐 -->
-                        <div class="form-group">
-                            <label class="control-label col-md-1">套餐:</label>
-                            <div class="col-md-8">
-                                <select class="form-control" id="package" name="package_id" style="width:15%;display: inline-block;">
-                                    @foreach($packages as $key=>$package)
-                                        <option value="{{$package->id}}" >{{$package->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <!-- 客户名 -->
-                        <div class="form-group">
-                            <label class="col-md-1 control-label"><font style="color:red;">*</font>客户姓名:</label>
-                            <div class="col-md-4">
-                                <input type="text" name="name" required placeholder="客户姓名" class="form-control" value="{{old('name')}}"/>
-                            </div>
-                        </div>
-                        <!-- 联系电话 -->
-                        <div class="form-group">
-                            <label class="col-md-1 control-label">联系电话:</label>
-                            <div class="col-md-4">
-                                <input type="text"  name="telephone" placeholder="联系电话" class="form-control" value="{{old('telephone')}}" />
-                            </div>
-                        </div>
-                        <!-- UIM码 -->
-                        <div class="form-group">
-                            <label class="col-md-1 control-label">UIM码:</label>
-                            <div class="col-md-4">
-                                <input type="text"  name="uim_number" placeholder="UIM码" class="form-control" value="{{old('uim_number')}}" />
-                            </div>
-                        </div>
-                        <!-- 副卡 -->
-                        <div class="form-group">
-                            <label class="col-md-1 control-label">副卡:</label>
-                            <div id="fuka_info" class="col-md-4">
-                                <input type="text" class="form-control fuka_list" style="display: inline-block;width:75%;margin-bottom:5px;"  name="side_numbers[]" placeholder="副卡" class="form-control" value="{{old('side_numbers')}}" />
-                                <button style="display: inline-block;width:20%;" id="fuka_add" type="button" class="btn btn-success">添加副卡</button>
-                            </div>
-                            
-                        </div>
-                        <!-- 是否绑老卡 -->
-                        <div class="form-group">
-                            <label class="col-md-1 control-label">绑老卡:</label>
-                            <div class="col-md-9">
-                                <label class="switch switch-primary">
-                                    <input  name="old_bind" style="" type="checkbox"><span class="switch"></span>
-                                </label>
-                            </div>
-                        </div>
-                        <!-- 入网时间 -->
+                    <!-- 入网时间 -->
                         <div class="form-group">
                                 <label class="control-label col-md-1">入网时间: </label>
                                 <div class="col-md-1">
@@ -129,23 +54,115 @@
                                     </select>
                                 </div>
                         </div>
-                        <!-- 收款 -->
+                    <!-- 客户经理 -->
                         <div class="form-group">
-                            <label class="col-md-1 control-label"></font>收款(元):</label>
-                            <div class="col-md-4">
-                                <input type="collections" style="width:25%;"  name="collections" placeholder="收款" class="form-control" value="{{old('collections')}}" />
+                            <label class="control-label col-md-1">客户经理:</label>
+                            <div class="col-md-8">
+                                <select class="form-control" id="manager" name="manager" style="width:15%;display: inline-block;">
+                                    @foreach($managers as $key=>$manager)
+                                        <option value="{{$manager->id}}" >{{$manager->name}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
-                        <!-- 收款方式 -->
-                        <div class="form-group goods_list">
-                                <label class="control-label col-md-1">收款方式:</label>
-                                <div class="col-md-8">
-                                    <select class="form-control" id="collections_type" name="collections_type" style="width:15%;display: inline-block;">
+                        <!-- 项目名称 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label"><font style="color:red;">*</font>项目名称:</label>
+                            <div class="col-md-4">
+                                <input type="text" name="project_name" required placeholder="项目名称" class="form-control" value="{{old('project_name')}}"/>
+                            </div>
+                        </div>
+
+                        <!-- 客户名 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label"><font style="color:red;">*</font>客户姓名:</label>
+                            <div class="col-md-4">
+                                <input type="text" name="name" required placeholder="客户姓名" class="form-control" value="{{old('name')}}"/>
+                            </div>
+                        </div>
+                    <!-- 新号码 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">新号码:</label>
+                            <div class="col-md-4 form-inline">
+                                <input type="text"  name="new_telephone" placeholder="新号码" class="form-control" value="{{old('new_telephone')}}" />
+                                <input type="text"  name="uim_number" placeholder="UIM码" class="form-control" value="{{old('uim_number')}}" />
+                            </div>
+                        </div>
+                        
+                        <!-- 副卡 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">副卡:</label>
+                            <div id="fuka_info" class="col-md-8">
+                                <div class="fuka_list form-inline" style="margin-bottom:5px;">
+                                    <input type="text" class="form-control"   name="side_numbers[]" placeholder="副卡" class="form-control" value="{{old('side_numbers')}}" />
+                                    <input type="text" class="form-control"   name="side_uim_numbers[]" placeholder="副卡UIM" class="form-control" value="{{old('side_uim_numbers')}}" />
+                                    <button  id="fuka_add" type="button" class="btn btn-success">添加副卡</button>
+                                </div>                            
+                            </div>
+                        </div>
+
+                        <!-- 套餐 -->
+                        <div class="form-group">
+                            <label class="control-label col-md-1">套餐:</label>
+                            <div class="col-md-3">
+                                <select class="form-control" id="package" name="package_id" style="display: inline-block;">
+                                    @foreach($packages as $key=>$package)
+                                        <option value="{{$package->id}}" >{{$package->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- 联系电话 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">联系电话:</label>
+                            <div class="col-md-4">
+                                <input type="text"  name="telephone" placeholder="联系电话" class="form-control" value="{{old('telephone')}}" />
+                            </div>
+                        </div>
+                        
+                        <!-- 是否集团卡 -->
+                        <div class="form-group form-inline">
+                            <label class="col-md-1 control-label">集团卡:</label>
+                            <div class="col-md-1">
+                                <label class="switch switch-primary">
+                                    <input  name="is_jituan" style="" type="checkbox"><span class="switch"></span>
+                                </label>
+                            </div>
+                            <label class="col-md-1 control-label">绑老卡:</label>
+                            <div class="col-md-1">
+                                <label class="switch switch-primary">
+                                    <input  name="old_bind" style="" type="checkbox"><span class="switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- 是否绑老卡 -->
+                        <!-- <div class="form-group">
+                            <label class="col-md-1 control-label">绑老卡:</label>
+                            <div class="col-md-9">
+                                <label class="switch switch-primary">
+                                    <input  name="old_bind" style="" type="checkbox"><span class="switch"></span>
+                                </label>
+                            </div>
+                        </div> -->
+                        <!-- 收款 -->
+                        <div class="form-group form-inline">
+                            <label class="col-md-1 control-label"></font>收款(元):</label>
+                            <div class="col-md-2">
+                                <input type="collections"  name="collections" placeholder="收款" class="form-control" value="{{old('collections')}}" />
+                            </div>
+                            <label class="control-label col-md-1">收款方式:</label>
+                                <div class="col-md-2">
+                                    <select class="form-control" id="collections_type" name="collections_type" style="display: inline-block;">
                                         @foreach($collections_type as $key=>$collections)
                                         <option value="{{$key}}" >{{$collections}}</option>
                                         @endforeach
                                     </select>
                                 </div>
+                        </div>
+                        <!-- 收款方式 -->
+                        <div class="form-group goods_list">
+                                
                                 
                         </div>
                         <!-- 备注 -->

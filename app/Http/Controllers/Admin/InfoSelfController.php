@@ -240,9 +240,15 @@ class InfoSelfController extends Controller
         $info         = $this->infoSelf->find($id);
         $package_info = $info->hasOnePackage;
 
+        if(!empty($info->side_number)){
+
+            $side_number_array     = explode('|', $info->side_number); //副卡数组
+            $side_uim_number_array = explode('|', $info->side_uim_number); //副卡uim数组
+        }
+        
          // dd($info->hasManyInfoDianxin);
 
-        return view('admin.infoSelf.show', compact('info', 'package_info'));
+        return view('admin.infoSelf.show', compact('info', 'package_info', 'side_number_array','side_uim_number_array'));
     }
 
     /**
@@ -264,7 +270,8 @@ class InfoSelfController extends Controller
 
         if(!empty($info->side_number)){
 
-            $side_number_array  = explode('|', $info->side_number); //副卡数组
+            $side_number_array     = explode('|', $info->side_number); //副卡数组
+            $side_uim_number_array = explode('|', $info->side_uim_number); //副卡uim数组
         }
         
         // dd($side_number_array);
@@ -275,7 +282,7 @@ class InfoSelfController extends Controller
 
 
         return view('admin.infoSelf.edit', compact(
-            'info', 'managers', 'packages', 'netin_year', 'netin_month', 'side_number_array'
+            'info', 'managers', 'packages', 'netin_year', 'netin_month', 'side_number_array','side_uim_number_array'
         ));
     }
 
@@ -352,8 +359,11 @@ class InfoSelfController extends Controller
         // dd($request->isMethod('post'));
         $infoSelfs           = $this->infoSelf->getAllInfos($request);
         $salesmans           = $this->user->getAllUsersByRole('1');  //获取所有业务员
+
+        $salesmans = DB::table('zr_users')->where('status', '1')->get();
         $salesman_statistics = array();
         
+        // dd($salesmans);
 
         if($request->isMethod('post')){
 
@@ -381,14 +391,15 @@ class InfoSelfController extends Controller
         // dd($netin);
         foreach ($salesmans as $key => $value) {
             # 每个业务员统计
-            $salesman_list[] = $value->id;
+            $salesman_list[$key]['id'] = $value->id;
+            $salesman_list[$key]['nick_name'] = $value->nick_name;
         }
 
         // dd($salesman_list);
-        $salesman_list = [
+        /*$salesman_list = [
             ['id' => '1', 'nick_name'=>'wcg'],
             ['id' => '2', 'nick_name'=>'mm'],
-        ];
+        ];*/
 
         foreach ($salesman_list as $key => $value) {
             # 每个业务员统计

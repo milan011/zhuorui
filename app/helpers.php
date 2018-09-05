@@ -380,3 +380,17 @@
 		}
        	// return (is_numeric($num)&($num&1));
    	}
+
+   	//二维数组去掉重复值
+   	function a_array_unique($array){
+        $out = array();
+
+        foreach ($array as $key=>$value) {
+            if (!in_array($value, $out)){
+                $out[$key] = $value;
+            }
+        }
+
+        $out = array_values($out);
+        return $out;
+    }

@@ -17,7 +17,7 @@ use Debugbar;
 class ManagerRepository implements ManagerRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['id', 'name', 'telephone', 'wx_number', 'remark', 'email', 'address', 'creater_id', 'status', 'created_at'];
+    protected $select_columns = ['id', 'name', 'telephone', 'wx_number','first_letter', 'remark', 'email', 'address', 'creater_id', 'status', 'created_at'];
 
     // 根据ID获得车源信息
     public function find($id)
@@ -38,9 +38,11 @@ class ManagerRepository implements ManagerRepositoryContract
         // dd($query);
         // $query = $query->where('is_show', '1');
         $query = $query->where('status', '1');
+        $query = $query->where('name', '!=', '');
         // $query = $query->where('car_status', $request->input('car_status', '1'));
 
         return $query->select($this->select_columns)
+                     ->orderBy('first_letter')
                      ->orderBy('created_at', 'desc')
                      ->paginate(10);
     }
@@ -53,8 +55,10 @@ class ManagerRepository implements ManagerRepositoryContract
         $query = new Manager();       // 返回的是一个Order实例,两种方法均可
 
         $query = $query->where('status', '1');
+        $query = $query->where('name', '!=', '');
 
         return $query->select($this->select_columns)
+                     ->orderBy('first_letter')
                      ->orderBy('created_at', 'desc')
                      ->get();
     }
@@ -82,12 +86,13 @@ class ManagerRepository implements ManagerRepositoryContract
         
         $manager  = Manager::findorFail($id);
         
-        $manager->name       = $requestData->name;
-        $manager->telephone  = $requestData->telephone;
-        $manager->wx_number  = $requestData->wx_number;
-        $manager->email      = $requestData->email;
-        $manager->address    = $requestData->address;
-        $manager->remark     = $requestData->remark;
+        $manager->name          = $requestData->name;
+        $manager->telephone     = $requestData->telephone;
+        $manager->first_letter  = $requestData->first_letter;
+        $manager->wx_number     = $requestData->wx_number;
+        $manager->email         = $requestData->email;
+        $manager->address       = $requestData->address;
+        $manager->remark        = $requestData->remark;
 
         $manager->save();
         // dd($shop->toJson());
