@@ -30,7 +30,7 @@ class PackageRepository implements PackageRepositoryContract
     // 获得车型列表
     public function getAllPackage()
     {   
-        return Package::where('status', '1')->orderBy('created_at', 'DESC')->paginate(10);
+        return Package::where('status', '1')->orderBy('package_price')->orderBy('created_at', 'DESC')->paginate(10);
     }
 
     // 获得所有套餐
@@ -38,6 +38,7 @@ class PackageRepository implements PackageRepositoryContract
     {   
         return Package::select($this->select_columns)
                        ->where('status', '1')
+                       ->orderBy('package_price')
                        ->get();
     }
 

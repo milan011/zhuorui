@@ -144,7 +144,7 @@ class PHPExcel_Shared_File
 
 			if (ini_get('upload_tmp_dir') !== FALSE) {
 				if ($temp = ini_get('upload_tmp_dir')) {
-					$temp = "F:/phpStudy/WWW\www.zhuorui.net/Temp";
+					$temp = "F:\phpStudy\WWW\www.zhuorui.net\Temp";
 					if (file_exists($temp))
 						return realpath($temp);
 				}

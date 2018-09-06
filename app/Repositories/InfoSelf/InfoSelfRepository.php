@@ -58,7 +58,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
                 $query = $query->where('old_bind', '0');
             break;
             default:
-                # code...
+                // $query = $query->where('status', '1');
                 break;
         }
         /*if(isset($request->payed)){
@@ -146,11 +146,18 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
             // 处理副卡信息
             // dd($requestData->all());
 
-            $side_list_info = [];
-            $side_number_arr= [];
-            $side_uim_number_arr= [];
+            $side_list_info      = [];
+            $side_number_arr     = [];
+            $side_uim_number_arr = [];
+            $side_list           = [];
+            $side_number         = '';
+            $side_uim_number     = '';
 
-            if(!empty($requestData['side_numbers'])){
+            // dd(array_filter($requestData['side_numbers']));
+
+            // dd(empty(array_filter($requestData['side_numbers'])));
+
+            if(!empty(array_filter($requestData['side_numbers']))){
 
                 foreach ($requestData['side_numbers'] as $key => $value) {
 
@@ -168,7 +175,15 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
                 $side_number     = implode("|",  $side_number_arr);
                 $side_uim_number = implode("|",  $side_uim_number_arr);
             }
+
+            // dd($side_list);
+            /*p($side_uim_number_arr);
+            dd(explode('|', $side_uim_number));*/
             
+            // 副卡uim数量
+            $side_uim_number_num = count(array_unique(array_filter($requestData['side_uim_numbers'])));
+
+
             
             /*p(count($side_list));
             p($side_number);
@@ -206,7 +221,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
             $requestData['side_number']          = $side_number;
             $requestData['side_number_num']      = count($side_list);
             $requestData['side_uim_number']      = $side_uim_number;
-            $requestData['side_uim_number_num']  = count($side_list);
+            $requestData['side_uim_number_num']  = $side_uim_number_num;
             $requestData['netin']                = $requestData['netin_year'].'-'.$requestData['netin_moth'];
             $requestData['old_bind']             = isset($requestData['old_bind']) ? '1' : '0';
             $requestData['is_jituan']            = isset($requestData['is_jituan']) ? '1' : '0';
@@ -234,31 +249,30 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
 
         // 处理副卡信息
         // dd($requestData->all());
-        $side_list_info = [];
-        $side_number_arr= [];
-        $side_uim_number_arr= [];
-
-            if(!empty($requestData['side_numbers'])){
-
-                foreach ($requestData['side_numbers'] as $key => $value) {
-                    
-                    $side_list_info[$key]['side'] = $value;
-                    $side_list_info[$key]['uim']  = $requestData['side_uim_numbers'][$key];
-                }
-
-                $side_list = a_array_unique($side_list_info);
-
-                foreach ($side_list as $key => $value) {
-                    $side_number_arr[]     = $value['side'];
-                    $side_uim_number_arr[] = $value['uim'];
-                }
-
-                // dd($side_number_arr);
-                $side_number     = implode("|",  $side_number_arr);
-                $side_uim_number = implode("|",  $side_uim_number_arr);
+        $side_list_info      = [];
+        $side_number_arr     = [];
+        $side_uim_number_arr = [];
+        $side_list           = [];
+        $side_number         = '';
+        $side_uim_number     = '';
+        // dd(array_filter($requestData['side_numbers']));
+        // dd(empty(array_filter($requestData['side_numbers'])));
+        if(!empty(array_filter($requestData['side_numbers']))){
+            foreach ($requestData['side_numbers'] as $key => $value) {
+                $side_list_info[$key]['side'] = $value;
+                $side_list_info[$key]['uim']  = $requestData['side_uim_numbers'][$key];
             }
-
+            $side_list = a_array_unique($side_list_info);
+            foreach ($side_list as $key => $value) {
+                $side_number_arr[]     = $value['side'];
+                $side_uim_number_arr[] = $value['uim'];
+            }
+            $side_number     = implode("|",  $side_number_arr);
+            $side_uim_number = implode("|",  $side_uim_number_arr);
+        }
         // dd($side_list);
+        // 副卡uim数量
+        $side_uim_number_num = count(array_unique(array_filter($requestData['side_uim_numbers'])));
         
         $info->name                 = $requestData->name;
         $info->user_telephone       = $requestData->telephone;
@@ -272,7 +286,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
         $info->collections          = $requestData->collections;
         $info->side_number          = $side_number;
         $info->side_uim_number      = $side_uim_number;
-        $info->side_uim_number_num  = count($side_list);
+        $info->side_uim_number_num  = $side_uim_number_num;
         $info->collections_type     = $requestData->collections_type;
         $info->netin                = $requestData->netin_year.'-'.$requestData->netin_moth;
         $info->old_bind             = isset($requestData->old_bind) ? '1' : '0';

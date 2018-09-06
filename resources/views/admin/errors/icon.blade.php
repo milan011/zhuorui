@@ -61,6 +61,9 @@
                             确认文件大小不超过2MB.
                         </li>
                         <li>
+                            <span style="color:red;">请下载标准表格</span>
+                        </li>
+                        <li>
                             <span style="color:red;">清除Excel所有数据格式(所有的sheet都需要清除)后重试.</span>
                         </li>
                     </ol>

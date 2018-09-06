@@ -31,7 +31,7 @@
         <div class="col-md-12">
             <div class="panel">
                 <div class="panel-body">
-                    <form action="{{route('package.update', ['package'=>$package->id])}}" class="form-horizontal" method="post">
+                    <form id="packageCreate" action="{{route('package.update', ['package'=>$package->id])}}" class="form-horizontal" method="post">
                     {!! csrf_field() !!}
                     {{ method_field('PUT') }}
                         <div class="form-group">
@@ -170,7 +170,12 @@
                     validators: {
                         notEmpty: {
                             message: '请输入套餐价格'
-                        }
+                        },
+                        /*regexp: {
+                            regexp: /^[0-9]*$/,
+
+                            message: '价格必须是正整数!'
+                        },*/
                     }
                 },
                 remark: {

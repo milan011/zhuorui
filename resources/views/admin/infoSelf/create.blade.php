@@ -60,7 +60,7 @@
                             <div class="col-md-8">
                                 <select class="form-control" id="manager" name="manager" style="width:15%;display: inline-block;">
                                     @foreach($managers as $key=>$manager)
-                                        <option value="{{$manager->id}}" >{{$manager->name}}</option>
+                                        <option value="{{$manager->id}}" ><font>{{$manager->name}}</font></option>
                                     @endforeach
                                 </select>
                             </div>

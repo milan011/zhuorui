@@ -61,7 +61,10 @@ class InfoDianxin extends Model
     public function addCondition($requestData){
 
         $query = $this;  
-
+        if(!empty($requestData['status'])){
+            //有订单状态选项
+            $query = $query->where('status', $requestData['status']);
+        } 
         return $query;
     }
 

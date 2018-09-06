@@ -85,7 +85,7 @@
 				</span>
 				<span>
 					<i>绑旧卡:</i>
-					@if($info->old_bind == 0) 是 @else 否 @endif
+					@if($info->old_bind == 1) 是 @else 否 @endif
 				</span>
 			</p>
 		</div>
@@ -132,6 +132,14 @@
 					<i>创建者/日期:</i>
 					{{$info->belongsToCreater->nick_name}}/{{substr($info->created_at, 0 ,10)}}
 				</span>
+				<span>
+					<i>集团卡:</i>
+					@if($info->is_jituan == 1) 是 @else 否 @endif
+				</span>
+			</p>
+		</div>
+		<div class="col-xs-12">
+			<p class="detial">
 				<span>
 					<i>备注:</i>		
 					{{$info->remark}}			

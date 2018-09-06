@@ -45,6 +45,8 @@ class InfoDianxinController extends Controller
      */
     public function index(Request $request)
     {
+        $request['status'] = '1';
+        
         $infos = $this->infoDianxin->getAllDianXinInfos($request);
         
         return view('admin.infoDianxin.index',compact(

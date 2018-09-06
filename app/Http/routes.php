@@ -49,6 +49,8 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	// Route::get('infoSelf/dealWith', 'InfoSelfController@dealWith')->name('infoSelf.dealWith')->middleware('throttle:0.1');
 	Route::get('infoSelf/dealWith', 'InfoSelfController@dealWith')->name('infoSelf.dealWith');
 	Route::match(['get', 'post'], 'infoSelf/statistics', 'InfoSelfController@statistics')->name('infoSelf.statistics');
+	//信息导出路由
+	Route::post('infoSelf/export','InfoSelfController@exportExcel')->name('infoSelf.export'); //Excel路由
 	//套餐管理index
 	Route::match(['get', 'post'], 'package/index', 'PackageController@index')->name('package.index');
 	//电信导入信息管理index

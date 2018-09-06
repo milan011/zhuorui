@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Auth;
 use Gate;
+use Excel;
 use DB;
 use Session;
 use Carbon;
@@ -48,6 +49,8 @@ class InfoSelfController extends Controller
     public function index(Request $request)
     {
         $request = $this->netin_date($request);
+
+        $pay_status = !empty($request['pay_status']) ? $request['pay_status'] : '' ;
         $select_conditions  = $request->all();
         $request['payed']   = false;
         $notPayed = true;
@@ -80,7 +83,7 @@ class InfoSelfController extends Controller
 
         // dd($infoSelfs[1]->hasManyInfoDianxin()->count());
         
-        return view('admin.infoSelf.index', compact('infoSelfs','action','info_status_now', 'select_conditions', 'netin', 'netin_year', 'netin_month'));
+        return view('admin.infoSelf.index', compact('infoSelfs', 'pay_status','action','info_status_now', 'select_conditions', 'netin', 'netin_year', 'netin_month'));
     }
 
     /**
@@ -94,6 +97,7 @@ class InfoSelfController extends Controller
         $info_status_now = '已付款';
         $select_conditions  = $request->all();
         $request['pay_status']   = 'payed';
+        $pay_status = 'payed';
         // dd($select_conditions);
         $action = route('infoSelf.payed');
 
@@ -120,7 +124,7 @@ class InfoSelfController extends Controller
         $infoSelfs = $this->infoSelf->getAllInfos($request);
         // dd($infoSelfs[0]->belongsToCreater);
         
-        return view('admin.infoSelf.index', compact('infoSelfs', 'action', 'info_status_now','select_conditions', 'netin', 'netin_year', 'netin_month'));
+        return view('admin.infoSelf.index', compact('infoSelfs','pay_status', 'action', 'info_status_now','select_conditions', 'netin', 'netin_year', 'netin_month'));
     }
 
     /**
@@ -133,6 +137,7 @@ class InfoSelfController extends Controller
         $request = $this->netin_date($request);
         $select_conditions  = $request->all();
         $request['pay_status']   = 'paying';
+        $pay_status = 'paying';
         $info_status_now = '付款中';
         $action = route('infoSelf.paying');
         // dd($select_conditions);
@@ -162,7 +167,7 @@ class InfoSelfController extends Controller
 
         // dd($infoSelfs[0]->belongsToCreater);
         
-        return view('admin.infoSelf.index', compact('infoSelfs','action', 'info_status_now', 'select_conditions', 'netin', 'netin_year', 'netin_month'));
+        return view('admin.infoSelf.index', compact('infoSelfs','pay_status','action', 'info_status_now', 'select_conditions', 'netin', 'netin_year', 'netin_month'));
     }
 
     /**
@@ -175,6 +180,7 @@ class InfoSelfController extends Controller
         $request = $this->netin_date($request);
         $select_conditions       = $request->all();
         $request['pay_status']   = 'unpayed';
+        $pay_status = 'unpayed';
         $info_status_now = '未付款';
         $notPayed = true;
         $action = route('infoSelf.notPayed');
@@ -188,7 +194,7 @@ class InfoSelfController extends Controller
         // dd($infoSelfs);
         // dd($infoSelfs[0]->belongsToCreater);
         
-        return view('admin.infoSelf.index', compact('infoSelfs','action', 'info_status_now','select_conditions', 'notPayed', 'netin', 'netin_year', 'netin_month'));
+        return view('admin.infoSelf.index', compact('infoSelfs', 'pay_status','action', 'info_status_now','select_conditions', 'notPayed', 'netin', 'netin_year', 'netin_month'));
     }
 
     /**
@@ -407,6 +413,7 @@ class InfoSelfController extends Controller
             $side_number    = 0;
             // dd(lastSql());
             // dd($value);
+            dd($salesman_info );
             foreach ($salesman_info as $k => $v) {
                 # 统计业务员副卡数目
                 
@@ -457,5 +464,153 @@ class InfoSelfController extends Controller
         }
         // dd($request->all());
         return $request;
+    }
+
+
+    /**
+     * Show the form for editing the specified resource.
+     * 导入文件
+     * @param  
+     * @return \Illuminate\Http\Response
+     */
+    public function exportExcel(Request $request)
+    {
+        
+        
+        $dt = Carbon::now(); //当前日期
+
+        $now_year  = $dt->year;  //当前年
+        $now_month = $dt->month; //当前月
+        // dd(strlen($netin_month));
+        if(strlen($now_month) == 1){
+            $now_month = '0'.$now_month;
+        }
+
+        /*$netin  = !empty($request->netin_year) ? $request->netin_year : $now_year . '-' . !empty($request->netin_month) ? $request->netin_month : $now_month;*/
+
+        if(empty($request->netin_year)){
+
+            $request['netin_year'] = $now_year;
+        }
+
+        if(empty($request->netin_month)){
+
+            $request['netin_month'] = $now_month;
+        }
+
+        $request['withNoPage'] = true;
+
+       
+
+        $excel_info = $this->infoSelf->getAllInfos($request);
+
+        
+
+        // dd(lastSql());
+        // dd($excel_info[0]->side_number);
+
+        $info_content = [];
+        foreach ($excel_info as $key => $value){
+
+            $fuka_info = null;
+
+            /*foreach ($value->hasManyOrderGoods as $key => $goods) {
+                $goods_info .= $goods->category_name;
+                $goods_info .= $goods->goods_name;
+                $goods_info .= $goods->goods_num;
+                $goods_info .= "\r\n";
+            }
+
+            $goods_info .= '发件人:'.$value->send_name;
+            
+            if(!empty($value->remark)){
+                $goods_info .= "\r\n";
+                $goods_info .= '备注:';
+                $goods_info .= $value->remark;
+            }*/
+
+            if(!empty($value->side_number)){
+
+                $side_number_arr     = explode("|",  $value->side_number);
+                $side_uim_number_arr = explode("|",  $value->side_uim_number);
+
+                foreach ($side_number_arr as $k => $v) {
+                    $fuka_info .= $v;
+                    $fuka_info .= '(';
+                    $fuka_info .= $side_uim_number_arr[$k];
+                    $fuka_info .= ')';
+                    $fuka_info .= "\r\n";
+                }
+
+                // dd($fuka_info);
+                $fuka_info = substr($fuka_info,0,strlen($fuka_info)-2); 
+            }
+            
+            if($value->is_jituan == 1){
+                $jituan_info = '是';
+            }else{
+                $jituan_info = '否';
+            }
+
+            if($value->old_bind == 1){
+                $old_bind_info = '是';
+            }else{
+                $old_bind_info = '否';
+            }
+
+
+            $info_content[] =  array(
+                $key+1,
+                substr($value->created_at, 0 ,10),
+                $value->manage_name, 
+                $value->manage_telephone,                 
+                $value->project_name,
+                $value->name,
+                $value->new_telephone,
+                $value->uim_number,
+                $jituan_info,
+                $old_bind_info,
+                $fuka_info,
+                isset($value->hasOnePackage->name) ? $value->hasOnePackage->name : '',
+                $value->user_telephone,
+                $value->collections,
+                config('zhuorui.collections_type')[$value->collections_type],
+                $value->belongsToCreater->nick_name,
+            );
+        }
+
+        
+        $titile_arr = ['序号','日期','客户经理','电话','项目', '客户姓名', '新号码', 'UIM码', '集团卡', '绑老卡','副卡(UIM)','套餐标准', '联系方式', '收款', '收款方式', '销售人'];
+
+        array_unshift($info_content, $titile_arr);
+
+        
+
+        $excels = Excel::create('信息',function($excel) use ($info_content){
+            $excel->sheet('score', function($sheet) use ($info_content){
+                $sheet->setWidth('A', 5);
+                $sheet->setWidth('B', 10);
+                $sheet->setWidth('C', 10);
+                $sheet->setWidth('D', 15);
+                $sheet->setWidth('E', 10); 
+                $sheet->setWidth('G', 20); 
+                $sheet->setWidth('H', 30); 
+                $sheet->setWidth('I', 5); 
+                $sheet->setWidth('J', 5); 
+                $sheet->setWidth('K', 50); 
+                $sheet->setWidth('L', 30); 
+                $sheet->setWidth('M', 15); 
+                $sheet->setWidth('N', 5); 
+                $sheet->setWidth('O', 10); 
+                $sheet->setWidth('P', 10); 
+                $sheet->setFontSize(15);
+                // $sheet->setValignment('middle');      
+                $sheet->rows($info_content);
+            });
+        });
+
+        
+        // dd($excels->save());
+        $excels->export('xlsx');
     }
 }

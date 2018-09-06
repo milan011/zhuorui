@@ -173,7 +173,11 @@
                     validators: {
                         notEmpty: {
                             message: '请输入套餐价格'
-                        }
+                        },
+                        /*regexp: {
+                            regexp: /^(?:[1-9][0-9]*\.[0-9]+|0\.(?!0+$)[0-9]+)$/,
+                            message: '价格必须是自然数!'
+                        },*/
                     }
                 },
                 remark: {

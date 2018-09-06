@@ -43,8 +43,11 @@
 						</li>
 						@endif
 						<li style="display: inline-block;line-height:20px;">
-                            <a href="#modal-select" data-toggle="modal" class="btn btn-primary">搜索信息</a>
+                            <a href="#model_select" id="info_select" data-toggle="modal" class="btn btn-primary">搜索信息</a>
 						</li>
+                        <li style="display: inline-block;line-height:20px;">
+                            <a href="javascript:void(0);" id="info_export" data-toggle="modal" class="btn btn-warning btn-sm">导出信息</a>
+                        </li>
 						<li style="display:inline-block;line-height:20px;float:left;">
 							<a href="#" onclick="window.history.go(-1);return false;" class="btn ">返回</a>
 						</li>
@@ -123,7 +126,7 @@
             </div>
         </div>
     </div>
-    <div id="modal-select" class="modal fade">
+    <div id="model_select" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -156,12 +159,15 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <input type="hidden" name="pay_status" value="{{$pay_status}}"></input>
                         </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">搜索</button>
-                            <a href="javascript:void(0);" class="btn" data-dismiss="modal">关闭</a>                            
+                            <a href="javascript:void(0);" class="btn" data-dismiss="modal">关闭</a> 
+                            <input type="hidden" id="export_url" value="{{route('infoSelf.export')}}">
+                            <input type="hidden" id="select_url" value="{{route('infoSelf.index')}}/index">                           
                         </div> 
                         </fieldset>                      
                     </form>
@@ -208,6 +214,27 @@
 			$('#condition').submit();
 			return false;
 		});
+
+        //导出信息
+        $('#info_export').click(function(event) {
+            var export_url = $('#export_url').val();
+            var form_obj   = $('#condition');
+
+            form_obj.attr('action', export_url);
+            form_obj.submit();
+            /*alert(export_url);
+            alert(form_obj_action);*/
+        });
+
+        //搜索信息
+        $('#info_select').click(function(event) {
+            /* Act on the event */
+            var select_url = $('#select_url').val();
+            var form_obj   = $('#condition');
+
+            form_obj.attr('action', select_url);
+            // form_obj.submit();
+        });
 	});
 </script>
 

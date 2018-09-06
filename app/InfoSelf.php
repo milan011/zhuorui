@@ -65,13 +65,6 @@ class InfoSelf extends Model
 
         }           
 
-        if(!empty($requestData['order_code'])){  //有订单号
-
-            $query = $query->where('order_code', $requestData['order_code']);
-
-            return $query;
-        }
-
         if(!empty($requestData['status'])){
             //有订单状态选项
             $query = $query->where('status', $requestData['status']);
