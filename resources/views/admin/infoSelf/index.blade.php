@@ -64,7 +64,9 @@
                                 <th>客户</th>
                                 <th>电话</th>
                                 <th>入网</th>
+                                @ifUserCan('dianxin.check')
                                 <th>返还状态</th>
+                                @endif
                                 <th>创建</th>
                                 <th>操作</th>
                             </tr>
@@ -84,8 +86,10 @@
                         	<td>{{$info->hasOnePackage->name or ''}}</td> 
                             <td>{{$info->name}}</td>
                             <td>{{$info->user_telephone or ''}}</td>                           
-                            <td>{{$info->netin or ''}}</td>                           
-                            <td><span style="color:@if($info->status == '1') #d50d24 @elseif($info->status == '2') #ffba00 @else #68b828 @endif;">{{$info_status[$info->status]}}</span></td>                           
+                            <td>{{$info->netin or ''}}</td>   
+                            @ifUserCan('dianxin.check')                        
+                            <td><span style="color:@if($info->status == '1') #d50d24 @elseif($info->status == '2') #ffba00 @else #68b828 @endif;">{{$info_status[$info->status]}}</span></td>  
+                            @endif                         
                             <td>{{$info->belongsToCreater->nick_name}}|{{substr($info->created_at, 0 ,10)}}</td>                                
                             <td class="center">
                                 <a class="btn btn-success" target="_blank" href="{{route('infoSelf.show', ['info'=>$info->id])}}">

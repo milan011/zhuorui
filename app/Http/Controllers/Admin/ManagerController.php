@@ -48,7 +48,8 @@ class ManagerController extends Controller
     {     
         
         $all_manager = $this->manager->getAllManagers($request);
-        // dd($all_manager);
+        // dd($all_manager->links());
+        // 
         return view('admin.manager.index', compact('all_manager'));
     }
 

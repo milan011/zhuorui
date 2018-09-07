@@ -69,8 +69,8 @@ class Handler extends ExceptionHandler
 
         if ($e instanceof HttpException) {
             $code = $e->getStatusCode();
-            p('哥我异常了!');
-            dd($e);
+            /*p('哥我异常了!');
+            dd($e);*/
             if (view()->exists('errors.' . $code)) {
                 $message  = $e->getMessage();
                 return response()->view('errors.' . $e->getStatusCode(), ['message'=>$message], $e->getStatusCode());
@@ -93,7 +93,7 @@ class Handler extends ExceptionHandler
         
         if(strstr($e->getFile(), 'phpexcel')){
             // p($e->getFile());
-            // dd($e);
+            dd($e);
             return redirect()->route('infoDianxin.error');
             
         }

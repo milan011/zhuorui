@@ -28,6 +28,7 @@
 @section('content')
 
 @include('layouts.message')
+<section class="main-content">
 	<form class="form-horizontal" action="{{route('role.updatePermission')}}" method="post">
 				{!! csrf_field() !!}
 				{{ method_field('PUT') }}
@@ -87,7 +88,6 @@
 				</div>          
 			</div>
 	    </div>
-	    
 		<ul style="background: none repeat scroll 0 0 #eee;border: 0 none;border-radius: 0;box-shadow: none;color: #aaa;line-height: 34px; margin: 0;">
 			<li style="display: inline-block;line-height: 20px;">
 				<input type="submit" value="保存">
@@ -99,6 +99,7 @@
 		</ul>         
 		</form>
 		<input type="hidden" name="role_permission" value="{{$role_permission}}">
+</section>
 @endsection
 
 @section('script_content')

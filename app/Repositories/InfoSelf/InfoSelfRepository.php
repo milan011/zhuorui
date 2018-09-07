@@ -286,6 +286,7 @@ class InfoSelfRepository implements InfoSelfRepositoryContract
         $info->collections          = $requestData->collections;
         $info->side_number          = $side_number;
         $info->side_uim_number      = $side_uim_number;
+        $info->remark               = $requestData->remark;
         $info->side_uim_number_num  = $side_uim_number_num;
         $info->collections_type     = $requestData->collections_type;
         $info->netin                = $requestData->netin_year.'-'.$requestData->netin_moth;

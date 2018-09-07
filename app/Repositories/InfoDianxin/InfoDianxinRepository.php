@@ -41,7 +41,9 @@ class InfoDianxinRepository implements InfoDianxinRepositoryContract
                 $query = $query->where('status', '1');
             }
         }
-        
+
+        $query = $query->where('status','!=', '0');
+
         // $query = $query->where('car_status', $request->input('car_status', '1'));
 
         if($request->withNoPage){ //无分页,全部返还

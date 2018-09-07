@@ -34,7 +34,7 @@ class RoleController extends Controller{
     }
     public function create()
     {
-        return view('roles.create');
+        return view('admin.roles.create');
     }
     public function store(StoreRoleRequest $roleRequest)
     {

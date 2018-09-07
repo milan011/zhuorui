@@ -20,7 +20,7 @@
 @section('content')
 
 @include('layouts.message')
-
+<section class="main-content">
 <div class="row-fluid sortable">
 	<div class="box span12">
 		<div class="box-content">
@@ -55,4 +55,5 @@
 		</div>
 	</div>			
 </div>   
+</section>
 @endsection

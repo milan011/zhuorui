@@ -93,17 +93,17 @@
                             </li> -->
                             @ifUserCan('user.check')
                             <li>
-                                <a href="{{route('user.index')}}"><i class="icon-layers"></i><span class="sidebar-text">用户管理</span></a>
+                                <a href="{{route('user.index')}}/index"><i class="icon-layers"></i><span class="sidebar-text">用户管理</span></a>
                             </li>
                             @endif
                             @ifUserCan('manage.check')
                             <li>
-                                <a href="{{route('manager.index')}}"><i class="icon-layers"></i><span class="sidebar-text">客户经理管理</span></a>
+                                <a href="{{route('manager.index')}}/index"><i class="icon-layers"></i><span class="sidebar-text">客户经理管理</span></a>
                             </li>
                             @endif
                             @ifUserCan('packge.check')
                             <li>
-                                <a href="{{route('package.index')}}"><i class="icon-layers"></i><span class="sidebar-text">套餐管理</span></a>
+                                <a href="{{route('package.index')}}/index"><i class="icon-layers"></i><span class="sidebar-text">套餐管理</span></a>
                             </li>
                             @endif
                             @ifUserCan('role.manage')

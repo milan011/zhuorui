@@ -40,9 +40,10 @@
                         <thead class="bg-default">
                             <tr>
                                 <th>业务员</th>
-                                <th>主卡数</th>
-                                <th>副卡数</th>
-                                <th>总计</th>
+                                <th>主卡数(绑老卡|不绑老卡)</th>
+                                <th>副卡数(绑老卡|不绑老卡)</th>
+                                <th>小计(绑老卡|不绑老卡)</th>
+                                <th>总数</th>
                                 <th>入网日期</th>
                             </tr>
                         </thead>
@@ -50,12 +51,21 @@
                         @foreach ($salesman_statistics as $statistic)
                         <tr>
                         	<td>{{$statistic['nick_name'] or ''}}</td> 
-                        	<td>{{$statistic['info_nums'] or ''}}</td> 
-                            <td>{{$statistic['side_nums'] or ''}}</td> 
-                        	<td>{{($statistic['side_nums'] + $statistic['info_nums'])}}</td> 
+                        	<td>{{$statistic['info_nums_num']}}|{{$statistic['info_nums_old']}}(小计:{{$statistic['info_nums_num'] + $statistic['info_nums_old']}})</td> 
+                            <td>{{$statistic['side_nums_num']}}|{{$statistic['side_nums_old']}}(小计:{{$statistic['info_nums_num'] + $statistic['side_nums_old']}})</td> 
+                        	<td>{{$statistic['info_nums_num'] + $statistic['side_nums_num']}}|{{$statistic['info_nums_old'] + $statistic['side_nums_old']}}</td> 
+                            <td>{{$statistic['info_nums_all'] + $statistic['side_nums_all']}}</td>
                             <td>{{$netin}}</td>
                         </tr>
                         @endforeach 
+                        <tr>
+                            <td>总卡数</td>
+                            <td>{{$total_num['info_nums_num_total']}}|{{$total_num['info_nums_old_total']}}(小计:{{$total_num['info_nums_num_total'] + $total_num['info_nums_old_total']}})</td>
+                            <td>{{$total_num['side_nums_num_total']}}|{{$total_num['side_nums_old_total']}}(小计:{{$total_num['side_nums_num_total'] + $total_num['side_nums_old_total']}})</td>
+                            <td>{{$total_num['info_nums_all_total']}}|{{$total_num['side_nums_all_total']}}</td>
+                            <td>{{$total_num['total_all']}}</td>
+                            <td>{{$netin}}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

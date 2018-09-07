@@ -366,7 +366,7 @@ class InfoSelfController extends Controller
         $infoSelfs           = $this->infoSelf->getAllInfos($request);
         $salesmans           = $this->user->getAllUsersByRole('1');  //获取所有业务员
 
-        $salesmans = DB::table('zr_users')->where('status', '1')->get();
+        $salesmans = DB::table('zr_users')->where('status', '1')->where('id','!=', '1')->get();
         $salesman_statistics = array();
         
         // dd($salesmans);
@@ -409,34 +409,77 @@ class InfoSelfController extends Controller
 
         foreach ($salesman_list as $key => $value) {
             # 每个业务员统计
-            $salesman_info  = $this->infoSelf->getSalesmanInfo($value['id'], $netin);
-            $side_number    = 0;
+            $salesman_info      = $this->infoSelf->getSalesmanInfo($value['id'], $netin);
+            $side_number_num    = 0; //未绑老卡信息数
+            $side_number_old    = 0; //绑老卡信息数
+            $old_bind_number    = 0; //绑老卡信息数
             // dd(lastSql());
             // dd($value);
-            dd($salesman_info );
+            // dd($salesman_info );
             foreach ($salesman_info as $k => $v) {
                 # 统计业务员副卡数目
                 
-                if(!empty($v->side_number)){
+                if($v->old_bind == 0){
+                    //绑老卡
+                    if(!empty($v->side_number)){
 
-                    $side_array = explode("|", $v->side_number);
-                    // p(count($side_array));
+                        $side_array_old = explode("|", $v->side_number);
+                        // p(count($side_array));
 
-                    $side_number += count($side_array);
+                        $side_number_old += count($side_array_old);
+                    }
+                    $old_bind_number++;
+                }else{
+                    //不绑老卡
+                    if(!empty($v->side_number)){
+
+                        $side_array = explode("|", $v->side_number);
+                        // p(count($side_array));
+
+                        $side_number_num += count($side_array);
+                    }
                 }
+                
             }
             /*p($side_number);
             dd($salesman_info->count());*/
 
-            $salesman_statistics[$key]['nick_name'] = $value['nick_name'];
-            $salesman_statistics[$key]['info_nums'] = $salesman_info->count();
-            $salesman_statistics[$key]['side_nums'] = $side_number;
-            $salesman_statistics[$key]['netin']     = $netin;
+            $salesman_statistics[$key]['nick_name']         = $value['nick_name'];
+            $salesman_statistics[$key]['info_nums_all']     = $salesman_info->count();
+            $salesman_statistics[$key]['info_nums_old']     = $old_bind_number;
+            $salesman_statistics[$key]['info_nums_num']     = ($salesman_info->count() - $old_bind_number);
+            $salesman_statistics[$key]['side_nums_all']     = $side_number_num + $side_number_old;
+            $salesman_statistics[$key]['side_nums_old']     = $side_number_old;
+            $salesman_statistics[$key]['side_nums_num']     = $side_number_num;
+            $salesman_statistics[$key]['netin']             = $netin;
         }
 
         // dd($salesman_statistics);
+
+        $total_num = [
+            'info_nums_all_total'  => 0,
+            'info_nums_old_total'  => 0,
+            'info_nums_num_total'  => 0,
+            'side_nums_all_total'  => 0,
+            'side_nums_old_total'  => 0,
+            'side_nums_num_total'  => 0,
+            'total_all'  => 0,
+
+        ];
+
+        foreach ($salesman_statistics as $key => $value) {
+            $total_num['info_nums_all_total'] += $value['info_nums_old'] + $value['info_nums_num'];
+            $total_num['info_nums_old_total'] += $value['info_nums_old'];
+            $total_num['info_nums_num_total'] += $value['info_nums_num'];
+            $total_num['side_nums_all_total'] += $value['side_nums_old'] + $value['side_nums_num'];
+            $total_num['side_nums_old_total'] += $value['side_nums_old'];
+            $total_num['side_nums_num_total'] += $value['side_nums_num'];
+            $total_num['total_all'] += $value['info_nums_all'] + $value['side_nums_all'];
+        }
+
+        // dd($total_num);
         
-        return view('admin.infoSelf.statistics', compact('salesman_statistics', 'netin', 'netin_year', 'netin_month'));
+        return view('admin.infoSelf.statistics', compact('salesman_statistics', 'netin', 'netin_year', 'netin_month', 'total_num'));
     }
 
     protected function netin_date($request){

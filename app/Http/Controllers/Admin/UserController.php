@@ -281,7 +281,7 @@ class UserController extends Controller {
 	}
 
 	public function resetPass(Request $request) {
-
+		// dd($request->user());
 		$oldpassword = $request->input('oldpassword');
 		$password = $request->input('password');
 		$data = $request->all();
@@ -296,6 +296,7 @@ class UserController extends Controller {
 		];
 		$validator = Validator::make($data, $rules, $messages);
 		$user = Auth::user();
+		// dd($user);
 		$validator->after(function ($validator) use ($oldpassword, $user) {
 			if (!\Hash::check($oldpassword, $user->password)) {
 				$validator->errors()->add('oldpassword', '原密码错误');
@@ -309,6 +310,6 @@ class UserController extends Controller {
 
 		Auth::logout(); //更改完这次密码后，退出这个用户
 
-		return redirect('admin/login');
+		return redirect('login');
 	}
 }

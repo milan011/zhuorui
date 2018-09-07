@@ -45,7 +45,7 @@ class InfoDianxinController extends Controller
      */
     public function index(Request $request)
     {
-        $request['status'] = '1';
+        // $request['status'] = '1';
         
         $infos = $this->infoDianxin->getAllDianXinInfos($request);
         
@@ -214,6 +214,10 @@ class InfoDianxinController extends Controller
             $table = $tables[0];
             
             // dd($table); //表是否为空
+            // 
+            $regexp_banlce_moth = '/^\+?[1-9][0-9]*$/'; //匹配只能是1或2位数字正则(结算月)
+            $regexp_return_moth = '/^\d{6}$/';   //匹配只能是6位数字正则(返还日期)
+            $regexp_tele        = '/^1[3|5|7|8|9]{1}[0-9]{9}$/';   //匹配电话号码
 
             if($table->isEmpty()){
                 // p('hehe');exit;
@@ -231,17 +235,46 @@ class InfoDianxinController extends Controller
                 if(!$table[0]->has($value)){
                     throw new \App\Exceptions\ExcelException('您导入的表第一行不符合要求,请下载标准表格');
                 }
-            }           
+            }         
 
+            /*$p = '/apple/';
+            $str = "apple banna";
+            if (preg_match($p, $str)) {
+                echo 'matched';
+            } */ 
+            // dd($table);
             foreach ($table as $key => $value) {
                 // 表每一行都必须有数据
                 foreach ($value as $k => $v) {
                    if(empty($v)){
-                        throw new \App\Exceptions\ExcelException('您导入的表有空数据,请填写数据后导入');
+                       
+                    throw new \App\Exceptions\ExcelException('您导入的表有空数据,请填写数据后导入,请检查第'.($key+2).'行');
                    }
                 }
-            }
 
+                // p(preg_match($regexp_banlce_moth, 2));exit;
+
+                if (!preg_match($regexp_banlce_moth, $value['结算月'])) {
+                    /*p($key);
+                    p((integer)$value['结算月']);
+
+                    dd($value);*/
+                    throw new \App\Exceptions\ExcelException('结算月应为1-12之间数字,请检查第'.($key+2).'行');
+                }
+
+                if (!preg_match($regexp_return_moth, $value['返还日期'])) {
+                    /*p($key);
+                    p((integer)$value['返还日期']);
+
+                    dd($value);*/
+                    throw new \App\Exceptions\ExcelException('返还日期应为******格式,如201801,请检查第'.($key+2).'行');
+                }
+
+                if (!preg_match($regexp_tele, $value['返款号码'])) {
+                    throw new \App\Exceptions\ExcelException('返款号码非有效手机号码请检查第'.($key+2).'行');
+                }
+            }
+            // dd('done');
             $table = $table->chunk(10); //循环处理数据每次处理10条
             /*$num = (string)2.0;
             dd($num);*/
